@@ -5,37 +5,37 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 /** 
  * CHECKLIST
- * [ ] TODO: DB 연결
+ * [x] TODO: DB 연결
  * [ ] TODO: CRUD API 구현
  * [ ] TODO: 로그인 인증 구현
  */
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  createUser(@Body() createUserDto: CreateUserDto) {
+    return this.userService.createUser(createUserDto);
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  findAllUsers() {
+    return this.userService.findAllUsers();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  findOneUser(@Param('id') id: string) {
+    return this.userService.findOneUser(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.updateUser(+id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  removeUser(@Param('id') id: string) {
+    return this.userService.removeUser(+id);
   }
 }
