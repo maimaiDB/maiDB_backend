@@ -9,7 +9,7 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 export class User extends BaseEntity {
   // 자동으로 증가하는 숫자형 ID
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
   email: string;
