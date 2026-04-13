@@ -14,7 +14,9 @@ export class User extends BaseEntity {
   @Column()
   email: string;
 
-  @Column()
+  // password 필드는 기본적으로 조회되지 않도록 설정
+  // 필요시엔 createQueryBuilder에서 addSelect를 통해 명시적으로 select할 수 있음
+  @Column({ select: false })
   password: string;
 
   @Column({ nullable: true })
