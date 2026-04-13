@@ -5,7 +5,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
-import { UserAdminResponseDto } from './dto/user-admin-response.dto';
+import { AdminUserResponseDto } from './dto/admin-user-response.dto';
 
 @Injectable()
 export class UserService {
@@ -72,11 +72,10 @@ export class UserService {
     const users = await this.userRepository.find({});
 
     // UserAdminResponseDto로 변환하여 반환
-    const responseData = plainToInstance(UserAdminResponseDto, users, {
+    const responseData = plainToInstance(AdminUserResponseDto, users, {
       // Expose된 필드만 포함하도록 설정
       excludeExtraneousValues: true,
     })
-
 
     return responseData;
   }
