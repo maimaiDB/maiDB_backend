@@ -7,8 +7,8 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('users') // 테이블 이름을 'users'로 설정
 export class User extends BaseEntity {
-  // uuid 형태로 id를 자동으로 생성하도록 설정
-  @PrimaryGeneratedColumn("uuid")
+  // 자동으로 증가하는 숫자형 ID
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column()
