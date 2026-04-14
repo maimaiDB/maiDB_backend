@@ -119,8 +119,41 @@ export class UserService {
     return responseData;
   }
 
-  updateUser(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+    // id 파라미터 유효성 검증 실패 처리
+    if (!id) {
+      throw new BadRequestException({
+        timestamp: new Date().toISOString(),
+        code: 'INVALID_INPUT',
+        message: 'ID 파라미터가 유효하지 않습니다.',
+      });
+    }
+
+    if (await this.userRepository.findOne({ where: { email: updateUserDto.email } })) {
+      throw new ConflictException({
+        timestamp: new Date().toISOString(),
+        code: 'EMAIL_ALREADY_EXISTS',
+        message: '이미 사용 중인 이메일입니다.',
+      });
+    }
+
+    const user = await this.userRepository.preload({
+      id: id,
+      ...updateUserDto,
+    });
+
+    // 해당 ID의 유저가 존재하지 않을 때 처리
+    if (!user) {
+      throw new NotFoundException({
+        timestamp: new Date().toISOString(),
+        code: 'USER_NOT_FOUNDED',
+        message: '해당 ID의 유저가 발견되지 않았습니다.',
+      });
+    }
+
+    const updatedUser = await this.userRepository.save(user);
+
+    return updatedUser;
   }
 
   removeUser(id: number) {

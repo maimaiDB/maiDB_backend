@@ -9,6 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
  * [ ] TODO: CRUD API 구현
  * [ ] TODO: 로그인 인증 구현
  * [x] TODO: 전달받는 데이터 유효성 검증 - class-validator를 사용하여 DTO 클래스에 유효성 검사 데코레이터 추가
+ * [ ] TODO: response 및 에러 형식 통일 - API 응답 형식을 일관되게 유지하기 위해 공통 응답 구조 정의
  */
 
 @Controller('users')
