@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 /**
  * CHECKLIST
@@ -37,12 +37,17 @@ export class User extends BaseEntity {
   @Column({ default: false })
   isAdmin: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  // soft delete를 위한 deletedAt 컬럼
+  // 삭제 시 해당 컬럼에 삭제 시각이 기록되고 실제 데이터는 삭제되지 않음  
+  // deletedAt이 null이 아닌 경우 해당 레코드는 find()시 조회되지 않음
+  // 실제 쿼리 : SELECT * FROM users WHERE deletedAt IS NULL;
+  // 삭제된 데이터까지 조회하려면 find시 find({withDeleted: true}) 옵션을 사용해야 함
+  @DeleteDateColumn()
   deletedAt: Date | null;
 }

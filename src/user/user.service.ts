@@ -16,25 +16,22 @@ export class UserService {
   ) { }
 
   async createUser(createUserDto: CreateUserDto) {
-    const { userEmail, password } = createUserDto;
+    const { email, password } = createUserDto;
 
     // 이메일 중복 확인
-    const existingUser = await this.userRepository.findOne({ where: { email: userEmail } });
+    const existingUser = await this.userRepository.findOne({ where: { email: email } });
     if (existingUser) {
       throw new ConflictException({
         success: false,
         timestamp: new Date().toISOString(),
-        error: {
-          code: 'EMAIL_ALREADY_EXISTS',
-          message: '이미 사용 중인 이메일입니다.',
-          path: '/users',
-        },
+        code: 'EMAIL_ALREADY_EXISTS',
+        message: '이미 사용 중인 이메일입니다.',
       });
     }
 
     /*
     // 이메일 유효성 검증 실패 처리
-    if (!userEmail || !this.isValidEmail(userEmail)) {
+    if (!email || !this.isValidEmail(email)) {
       throw new BadRequestException({
         success: false,
         timestamp: new Date().toISOString(),
@@ -49,7 +46,7 @@ export class UserService {
 
     // 사용자 생성
     const newUser = this.userRepository.create({
-      email: userEmail,
+      email,
       password,
     });
     const savedUser = await this.userRepository.save(newUser);
@@ -82,17 +79,12 @@ export class UserService {
   }
 
   async findOneUser(id: number) {
-
     // id 파라미터 유효성 검증 실패 처리
     if (!id) {
       throw new BadRequestException({
-        success: false,
         timestamp: new Date().toISOString(),
-        error: {
-          code: 'INVALID_INPUT',
-          message: 'ID 파라미터가 유효하지 않습니다.',
-          path: `/users/${id}`,
-        },
+        code: 'INVALID_INPUT',
+        message: 'ID 파라미터가 유효하지 않습니다.',
       });
     }
 
@@ -101,13 +93,9 @@ export class UserService {
     // 해당 ID의 유저가 존재하지 않을 때 처리
     if (!user) {
       throw new NotFoundException({
-        success: false,
         timestamp: new Date().toISOString(),
-        error: {
-          code: 'USER_NOT_FOUNDED',
-          message: '해당 ID의 유저가 발견되지 않았습니다.',
-          path: `/users/${id}`,
-        },
+        code: 'USER_NOT_FOUNDED',
+        message: '해당 ID의 유저가 발견되지 않았습니다.',
       });
     }
 
@@ -156,7 +144,29 @@ export class UserService {
     return updatedUser;
   }
 
-  removeUser(id: number) {
-    return `This action removes a #${id} user`;
+  async removeUser(id: number) {
+    // id 파라미터 유효성 검증 실패 처리
+    if (!id) {
+      throw new BadRequestException({
+        timestamp: new Date().toISOString(),
+        code: 'INVALID_INPUT',
+        message: 'ID 파라미터가 유효하지 않습니다.',
+      });
+    }
+
+    // soft delete 수행 - deletedAt 컬럼에 삭제 시각이 기록되고 실제 데이터는 삭제되지 않음
+    // soft delete를 취소하려면 await this.userRepository.restore(id);
+    const responseData = await this.userRepository.softDelete(id);
+
+    // 해당 ID의 유저가 존재하지 않을 때 처리
+    if (responseData.affected === 0) {
+      throw new NotFoundException({
+        timestamp: new Date().toISOString(),
+        code: 'USER_NOT_FOUNDED',
+        message: '해당 ID의 유저가 발견되지 않았습니다.',
+      });
+    }
+
+    return responseData;
   }
 }
