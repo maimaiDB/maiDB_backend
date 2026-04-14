@@ -20,10 +20,19 @@ export class User extends BaseEntity {
   password: string;
 
   @Column({ nullable: true })
+  nickname: string;
+
+  @Column({ default: 0 })
+  playCount: number;
+
+  @Column({ default: 0 })
   maxRating: number;
 
-  @Column({ nullable: true })
+  @Column({ default: 0 })
   currentRating: number;
+
+  @Column({ default: true })
+  isPublic: boolean;
 
   @Column({ default: false })
   isAdmin: boolean;

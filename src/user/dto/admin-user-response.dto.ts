@@ -15,6 +15,9 @@ export class AdminUserResponseDto {
     currentRating: number;
 
     @Expose()
+    isPublic: boolean;
+
+    @Expose()
     isAdmin: boolean;
 
     @Expose()
