@@ -26,13 +26,13 @@ export class UserController {
   }
 
   @Get(':id')
-  findOneUser(@Param('id') id: string) {
-    return this.userService.findOneUser(+id);
+  findOneUser(@Param('id') id: number) {
+    return this.userService.findOneUser(id);
   }
 
   @Patch(':id')
-  updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.updateUser(+id, updateUserDto);
+  updateUser(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')

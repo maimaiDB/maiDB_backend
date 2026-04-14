@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, ConflictException } from '@nestjs/common';
+import { Injectable, BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { AdminUserResponseDto } from './dto/admin-user-response.dto';
+import { PublicUserResponseDto } from './dto/public-user-response.dto';
 
 @Injectable()
 export class UserService {
@@ -80,8 +81,42 @@ export class UserService {
     return responseData;
   }
 
-  findOneUser(id: number) {
-    return `This action returns a #${id} user`;
+  async findOneUser(id: number) {
+
+    // id 파라미터 유효성 검증 실패 처리
+    if (!id) {
+      throw new BadRequestException({
+        success: false,
+        timestamp: new Date().toISOString(),
+        error: {
+          code: 'INVALID_INPUT',
+          message: 'ID 파라미터가 유효하지 않습니다.',
+          path: `/users/${id}`,
+        },
+      });
+    }
+
+    const user = await this.userRepository.findOne({ where: { id: id } });
+
+    // 해당 ID의 유저가 존재하지 않을 때 처리
+    if (!user) {
+      throw new NotFoundException({
+        success: false,
+        timestamp: new Date().toISOString(),
+        error: {
+          code: 'USER_NOT_FOUNDED',
+          message: '해당 ID의 유저가 발견되지 않았습니다.',
+          path: `/users/${id}`,
+        },
+      });
+    }
+
+    const responseData = plainToInstance(PublicUserResponseDto, user, {
+      // Expose된 필드만 포함하도록 설정
+      excludeExtraneousValues: true,
+    });
+
+    return responseData;
   }
 
   updateUser(id: number, updateUserDto: UpdateUserDto) {
