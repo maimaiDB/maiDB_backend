@@ -7,26 +7,26 @@ import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 export class UpdateUserDto extends PartialType(CreateUserDto) {
     // email, password는 CreateUserDto를 통해 포함됨
     @IsOptional()
-    @IsString()
+    @IsString({ message: '닉네임은 문자열이어야 합니다.' })
     nickname?: string;
 
     @IsOptional()
-    @IsNumber()
+    @IsNumber({}, { message: '플레이 횟수는 숫자여야 합니다.' })
     playCount?: number;
 
     @IsOptional()
-    @IsNumber()
+    @IsNumber({}, { message: '최고 레이팅은 숫자여야 합니다.' })
     maxRating?: number;
 
     @IsOptional()
-    @IsNumber()
+    @IsNumber({}, { message: '현재 레이팅은 숫자여야 합니다.' })
     currentRating?: number;
 
     @IsOptional()
-    @IsBoolean()
+    @IsBoolean({ message: '공개 여부는 boolean 값이어야 합니다.' })
     isPublic?: boolean;
 
     @IsOptional()
-    @IsBoolean()
+    @IsBoolean({ message: '관리 권한 여부는 boolean 값이어야 합니다.' })
     isAdmin?: boolean;
 }
