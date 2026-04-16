@@ -7,6 +7,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { AdminUserResponseDto } from './dto/admin-user-response.dto';
 import { PublicUserResponseDto } from './dto/public-user-response.dto';
+import { EmailAlreadyExistsException, InvalidIdFormatException, UserNotFoundedException } from 'src/common/exception/service.exception';
 
 @Injectable()
 export class UserService {
@@ -21,12 +22,7 @@ export class UserService {
     // 이메일 중복 확인
     const existingUser = await this.userRepository.findOne({ where: { email: email } });
     if (existingUser) {
-      throw new ConflictException({
-        success: false,
-        timestamp: new Date().toISOString(),
-        code: 'EMAIL_ALREADY_EXISTS',
-        message: '이미 사용 중인 이메일입니다.',
-      });
+      throw EmailAlreadyExistsException();
     }
 
     /*
@@ -81,22 +77,14 @@ export class UserService {
   async findOneUser(id: number) {
     // id 파라미터 유효성 검증 실패 처리
     if (!id) {
-      throw new BadRequestException({
-        timestamp: new Date().toISOString(),
-        code: 'INVALID_INPUT',
-        message: 'ID 파라미터가 유효하지 않습니다.',
-      });
+      throw InvalidIdFormatException();
     }
 
     const user = await this.userRepository.findOne({ where: { id: id } });
 
     // 해당 ID의 유저가 존재하지 않을 때 처리
     if (!user) {
-      throw new NotFoundException({
-        timestamp: new Date().toISOString(),
-        code: 'USER_NOT_FOUNDED',
-        message: '해당 ID의 유저가 발견되지 않았습니다.',
-      });
+      throw UserNotFoundedException();
     }
 
     const responseData = plainToInstance(PublicUserResponseDto, user, {
@@ -110,19 +98,11 @@ export class UserService {
   async updateUser(id: number, updateUserDto: UpdateUserDto) {
     // id 파라미터 유효성 검증 실패 처리
     if (!id) {
-      throw new BadRequestException({
-        timestamp: new Date().toISOString(),
-        code: 'INVALID_INPUT',
-        message: 'ID 파라미터가 유효하지 않습니다.',
-      });
+      throw InvalidIdFormatException();
     }
 
     if (await this.userRepository.findOne({ where: { email: updateUserDto.email } })) {
-      throw new ConflictException({
-        timestamp: new Date().toISOString(),
-        code: 'EMAIL_ALREADY_EXISTS',
-        message: '이미 사용 중인 이메일입니다.',
-      });
+      throw EmailAlreadyExistsException();
     }
 
     const user = await this.userRepository.preload({
@@ -132,11 +112,7 @@ export class UserService {
 
     // 해당 ID의 유저가 존재하지 않을 때 처리
     if (!user) {
-      throw new NotFoundException({
-        timestamp: new Date().toISOString(),
-        code: 'USER_NOT_FOUNDED',
-        message: '해당 ID의 유저가 발견되지 않았습니다.',
-      });
+      throw UserNotFoundedException();
     }
 
     const updatedUser = await this.userRepository.save(user);
@@ -147,11 +123,7 @@ export class UserService {
   async removeUser(id: number) {
     // id 파라미터 유효성 검증 실패 처리
     if (!id) {
-      throw new BadRequestException({
-        timestamp: new Date().toISOString(),
-        code: 'INVALID_INPUT',
-        message: 'ID 파라미터가 유효하지 않습니다.',
-      });
+      throw InvalidIdFormatException();
     }
 
     // soft delete 수행 - deletedAt 컬럼에 삭제 시각이 기록되고 실제 데이터는 삭제되지 않음
@@ -160,11 +132,7 @@ export class UserService {
 
     // 해당 ID의 유저가 존재하지 않을 때 처리
     if (responseData.affected === 0) {
-      throw new NotFoundException({
-        timestamp: new Date().toISOString(),
-        code: 'USER_NOT_FOUNDED',
-        message: '해당 ID의 유저가 발견되지 않았습니다.',
-      });
+      throw UserNotFoundedException();
     }
 
     return responseData;

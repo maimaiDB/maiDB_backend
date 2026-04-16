@@ -18,10 +18,10 @@ export const InvalidIdFormatException = (message?: string): ServiceException => 
     return new ServiceException(INVALID_ID_FORMAT, message);
 }
 
-export const UserNotFounded = (message?: string): ServiceException => {
+export const UserNotFoundedException = (message?: string): ServiceException => {
     return new ServiceException(USER_NOT_FOUNDED, message);
 }
 
-export const EmailAlreadyExists = (message?: string): ServiceException => {
+export const EmailAlreadyExistsException = (message?: string): ServiceException => {
     return new ServiceException(EMAIL_ALREADY_EXISTS, message);
 }
