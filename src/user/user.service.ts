@@ -74,7 +74,7 @@ export class UserService {
     return responseData;
   }
 
-  async findOneUser(id: number) {
+  async findUserById(id: number) {
     // id 파라미터 유효성 검증 실패 처리
     if (!id) {
       throw InvalidIdFormatException();
@@ -93,6 +93,21 @@ export class UserService {
     });
 
     return responseData;
+  }
+
+  async findUserByEmailWithPassword(email: string) {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .addSelect('user.password') // password 필드도 선택하여 조회
+      .where('user.email = :email', { email })
+      .getOne();
+
+    // 해당 이메일의 유저가 존재하지 않을 때 처리
+    if (!user) {
+      throw UserNotFoundedException();
+    }
+
+    return user;
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto) {
