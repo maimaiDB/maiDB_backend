@@ -6,6 +6,12 @@ import { LogoutDto } from './dto/logout.dto';
 @Injectable()
 export class AuthService {
   login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+
+    const payload = { email, password };
+    const accessToken = this.jwtService.sign(payload);
+    console.log(accessToken);
+
     return 'This action adds a new auth';
   }
 
