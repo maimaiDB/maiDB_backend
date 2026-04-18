@@ -9,8 +9,14 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @Post('/login')
-  login(@Body() loginDto: LoginDto) {
-    return this.authService.validateUser(loginDto);
+  async login(@Body() loginDto: LoginDto) {
+    const user = await this.authService.validateUser(loginDto);
+    const accessToken = await this.authService.generateAccessToken(user);
+    const refreshToken = await this.authService.generateRefreshToken(user);
+
+    return {
+      accessToken, refreshToken
+    };
   }
 
   @Post('/refresh')
