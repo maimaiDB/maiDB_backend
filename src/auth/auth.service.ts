@@ -44,13 +44,13 @@ export class AuthService {
   }
 
   async generateAccessToken(user: User) {
-    const payload = { email: user.email, id: user.id, nickname: user.nickname };
+    const payload = { email: user.email, userId: user.id, nickname: user.nickname };
 
     return await this.jwtService.signAsync(payload);
   }
 
   async generateRefreshToken(user: User) {
-    const payload = { email: user.email, id: user.id, nickname: user.nickname };
+    const payload = { email: user.email, userId: user.id, nickname: user.nickname };
 
     return await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
