@@ -10,6 +10,10 @@ import { InvalidJwtFormatException, TokenExpiredException, InvalidJwtTokenExcept
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
+  /**
+   * CHECKLIST
+   * [ ] TODO: 해당 유저의 만료되지 않은 refresh token이 존재하는 경우, 새로운 refresh token을 발급하기 전에 기존 refresh token을 만료시키거나 삭제하는 로직 구현 (refresh token의 유효성을 보장하기 위해) 
+   */
   @Post('/login')
   @HttpCode(200) // 로그인 성공 시 200 OK 상태 코드 반환
   async login(
@@ -41,14 +45,29 @@ export class AuthController {
   }
 
   @Post('/refresh')
-  async refreshAccessToken(@Body() refreshAccessTokenDto: RefreshAccessTokenDto) {
+  async refreshAccessToken(
+    @Body() refreshAccessTokenDto: RefreshAccessTokenDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
     // refreshAccessToken에서 verifyAsync 메소드를 사용하여 refresh token가 jwt 형식에 맞는지, 만료되지 않았는지를 검증함.
     // verifyAsync 메소드는 실패시 500 Internal Server Error를 발생시키기 때문에, 이를 처리하기 위해 try catch 사용
     // JWT 형식 오류의 경우 error.name = ' JsonWebTokenError', error.message = 'jwt malformed'
     // JWT 서명 불일치(JWT위조 혹은 secret 불일치)의 경우 error.name = ' JsonWebTokenError', error.message = 'invalid signature'
     // JWT 만료 오류의 경우 error.name = 'TokenExpiredError'
     try {
-      console.log(await this.authService.refreshAccessToken(refreshAccessTokenDto));
+      const newAccessToken = await this.authService.refreshAccessToken(refreshAccessTokenDto);
+
+      res.setHeader('Authorization', 'Bearer ' + newAccessToken);
+      res.cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        // TODO [ ]: .env로 환경에 따라 secure 옵션을 true 혹은 false로 설정하여 HTTP 연결에서도 쿠키가 전송될 수 있도록 함 (개발 환경에서는 HTTPS를 사용하지 않을 수 있기 때문) 
+        // secure: true,   // HTTPS 연결에서만 쿠키 전송
+      });
+
+      return {
+        message: "accessToken 재발급 성공!",
+        timestamp: new Date().toISOString()
+      }
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
         // 토큰 만료됨

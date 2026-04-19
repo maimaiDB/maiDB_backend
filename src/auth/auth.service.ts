@@ -70,14 +70,20 @@ export class AuthService {
     return savedRefreshToken;
   }
 
-  login(loginDto: LoginDto) {
-    const { email, password } = loginDto;
+  async refreshAccessToken(refreshAccessTokenDto: RefreshAccessTokenDto) {
+    const { refreshToken } = refreshAccessTokenDto;
 
-    const payload = { email, password };
-    const accessToken = this.jwtService.sign(payload);
-    console.log(accessToken);
+    const decodedRefreshToken = await this.jwtService.verifyAsync(refreshToken, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET')
+    });
 
-    return 'This action adds a new auth';
+    const userId = decodedRefreshToken.userId;
+    const user = await this.userService.findUserById(userId);
+    // User가 발견되지 않은 경우 findUserById에서 exception을 던지기 때문에 여기선 처리 안함
+
+    const newAccessToken = await this.generateAccessToken(user);
+
+    return newAccessToken;
   }
 
   async removeRefreshToken(refreshToken: string) {
