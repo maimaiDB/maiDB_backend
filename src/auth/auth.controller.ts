@@ -30,11 +30,15 @@ export class AuthController {
     // DB에 refresh token 저장
     await this.authService.setRefreshToken(user, refreshToken);
 
-    // 응답 쿠키에 access token 설정 (httpOnly로 설정하여 클라이언트에서 접근 불가능하게 함)
-    res.setHeader('Authorization', 'Bearer ' + accessToken);
+    // 응답 쿠키에 access token 및 refresh token 설정 (httpOnly로 설정하여 클라이언트에서 접근 불가능하게 함)
+    res.setHeader('Authorization', 'Bearer ' + [accessToken, refreshToken]);
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       // TODO [ ]: .env로 환경에 따라 secure 옵션을 true 혹은 false로 설정하여 HTTP 연결에서도 쿠키가 전송될 수 있도록 함 (개발 환경에서는 HTTPS를 사용하지 않을 수 있기 때문) 
+      // secure: true,   // HTTPS 연결에서만 쿠키 전송
+    });
+    res.cookie('accessToken', refreshToken, {
+      httpOnly: true,
       // secure: true,   // HTTPS 연결에서만 쿠키 전송
     });
 
@@ -60,7 +64,6 @@ export class AuthController {
       res.setHeader('Authorization', 'Bearer ' + newAccessToken);
       res.cookie('accessToken', newAccessToken, {
         httpOnly: true,
-        // TODO [ ]: .env로 환경에 따라 secure 옵션을 true 혹은 false로 설정하여 HTTP 연결에서도 쿠키가 전송될 수 있도록 함 (개발 환경에서는 HTTPS를 사용하지 않을 수 있기 때문) 
         // secure: true,   // HTTPS 연결에서만 쿠키 전송
       });
 
@@ -90,7 +93,6 @@ export class AuthController {
       // 그 외의 경우
       return error;
     }
-    return;
   }
 
   @Post('/logout')
