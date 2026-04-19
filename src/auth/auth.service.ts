@@ -80,8 +80,8 @@ export class AuthService {
     return 'This action adds a new auth';
   }
 
-  refreshAccessToken(refreshAccessTokenDto: RefreshAccessTokenDto) {
-    return `refresh access token method`;
+  async removeRefreshToken(refreshToken: string) {
+    await this.refreshTokenRepository.delete({ token: refreshToken });
   }
 
   logout(lotougDto: LogoutDto) {
