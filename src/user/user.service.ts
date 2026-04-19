@@ -25,21 +25,6 @@ export class UserService {
       throw EmailAlreadyExistsException();
     }
 
-    /*
-    // 이메일 유효성 검증 실패 처리
-    if (!email || !this.isValidEmail(email)) {
-      throw new BadRequestException({
-        success: false,
-        timestamp: new Date().toISOString(),
-        error: {
-          code: 'INVALID_INPUT',
-          message: '유효하지 않은 이메일 형식입니다.',
-          path: '/users',
-        },
-      });
-    }
-    */
-
     // 사용자 생성
     const newUser = this.userRepository.create({
       email,
@@ -47,14 +32,7 @@ export class UserService {
     });
     const savedUser = await this.userRepository.save(newUser);
 
-    return {
-      success: true,
-      data: {
-        userId: savedUser.id,
-        email: savedUser.email,
-        createdAt: savedUser.createdAt,
-      },
-    };
+    return savedUser;
   }
 
   private isValidEmail(email: string): boolean {
@@ -65,13 +43,7 @@ export class UserService {
   async findAllUsers() {
     const users = await this.userRepository.find({});
 
-    // UserAdminResponseDto로 변환하여 반환
-    const responseData = plainToInstance(AdminUserResponseDto, users, {
-      // Expose된 필드만 포함하도록 설정
-      excludeExtraneousValues: true,
-    })
-
-    return responseData;
+    return users;
   }
 
   async findUserById(id: number) {
@@ -87,12 +59,7 @@ export class UserService {
       throw UserNotFoundedException();
     }
 
-    const responseData = plainToInstance(PublicUserResponseDto, user, {
-      // Expose된 필드만 포함하도록 설정
-      excludeExtraneousValues: true,
-    });
-
-    return responseData;
+    return user;
   }
 
   async findUserByEmailWithPassword(email: string) {
