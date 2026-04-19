@@ -52,6 +52,6 @@ export class User extends BaseEntity {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @OneToMany(() => RefreshToken, refreshToken => refreshToken.user)
+  @OneToMany(() => RefreshToken, refreshToken => refreshToken.userId)
   refreshTokens?: RefreshToken[];
 }

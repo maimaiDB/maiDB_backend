@@ -17,9 +17,6 @@ export class RefreshToken extends BaseEntity {
     @Column({ nullable: false })
     expiresAt: Date;
 
-    @Column({ nullable: true })
-    revokedAt: Date;
-
     @CreateDateColumn()
     createdAt: Date;
 
@@ -29,5 +26,5 @@ export class RefreshToken extends BaseEntity {
         { nullable: false, onDelete: 'CASCADE' }
     )
     @JoinColumn({ name: 'userId' })
-    user: User;
+    userId: number;
 }

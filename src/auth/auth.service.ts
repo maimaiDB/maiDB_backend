@@ -26,6 +26,8 @@ export class AuthService {
     * [x] TODO: generateAccessToken 및 generateRefreshToken 메소드 작성
     * [ ] TODO: bcrypt를 사용해 password 및 jwt 해싱을 통한 암호화 구현
     * [ ] TODO: password와 관련된 정책 확실히 정의(어차피 암호화 됐으니 자유롭게 꺼낼것인가, 아님 암호화해도 지금처럼 한정적으로 꺼낼 수 있게 할것인가)
+    * [ ] TODO: refresh token 저장 및 관리 로직 구현 (DB에 저장, 만료된 토큰 삭제 등)
+    * [ ] TODO: Guard를 사용해 인증된 사용자만 접근할 수 있는 API 구현
    */
   async validateUser(loginDto: LoginDto) {
     const { email, password } = loginDto;
@@ -54,6 +56,18 @@ export class AuthService {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       expiresIn: parseInt(this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') || '86400', 10),
     });
+  }
+
+  async setRefreshToken(user: User, refreshToken: string) {
+    const newRefreshToken = await this.refreshTokenRepository.create({
+      token: refreshToken,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + parseInt(this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') || '86400', 10) * 1000),
+    });
+
+    const savedRefreshToken = await this.refreshTokenRepository.save(newRefreshToken);
+
+    return savedRefreshToken;
   }
 
   login(loginDto: LoginDto) {
