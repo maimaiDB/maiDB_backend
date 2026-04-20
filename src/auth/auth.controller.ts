@@ -37,7 +37,7 @@ export class AuthController {
       // TODO [ ]: .env로 환경에 따라 secure 옵션을 true 혹은 false로 설정하여 HTTP 연결에서도 쿠키가 전송될 수 있도록 함 (개발 환경에서는 HTTPS를 사용하지 않을 수 있기 때문) 
       // secure: true,   // HTTPS 연결에서만 쿠키 전송
     });
-    res.cookie('accessToken', refreshToken, {
+    res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       // secure: true,   // HTTPS 연결에서만 쿠키 전송
     });
