@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from 'src/user/user.module';
+import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 
 @Module({
   imports: [
@@ -25,7 +26,12 @@ import { UserModule } from 'src/user/user.module';
     // AuthService와 UserModule 간의 순환 의존성 해결을 위해 forwardRef 사용  
     forwardRef(() => UserModule),
   ],
-  controllers: [AuthController],
-  providers: [AuthService],
+  controllers: [
+    AuthController,
+  ],
+  providers: [
+    AuthService,
+    JwtRefreshStrategy,
+  ],
 })
 export class AuthModule { }

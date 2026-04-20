@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpCode, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
 import { LogoutDto } from './dto/logout.dto';
 import { Response } from 'express';
 import { InvalidJwtFormatException, TokenExpiredException, InvalidJwtTokenException } from 'src/common/exception/service.exception';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 
 @Controller('auths')
 export class AuthController {
@@ -96,7 +97,9 @@ export class AuthController {
   }
 
   @Post('/logout')
-  logout(lotougDto: LogoutDto) {
-    return this.authService.logout(lotougDto);
+  // 로그아웃 시 refresh token의 유효성을 검사하여 인증된 사용자만 로그아웃할 수 있도록 함
+  @UseGuards(JwtRefreshGuard)
+  logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+    return `logout 성공!`;
   }
 }
