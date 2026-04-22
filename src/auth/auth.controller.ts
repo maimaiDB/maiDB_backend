@@ -99,7 +99,14 @@ export class AuthController {
   @Post('/logout')
   // 로그아웃 시 refresh token의 유효성을 검사하여 인증된 사용자만 로그아웃할 수 있도록 함
   @UseGuards(JwtRefreshGuard)
-  logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
-    return `logout 성공!`;
+  async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+    // console.log(req.cookies);
+    await this.authService.removeRefreshToken(req.cookies.refreshToken);
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    return {
+      message: "로그아웃 성공!",
+      timestamp: new Date().toISOString()
+    };
   }
 }

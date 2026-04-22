@@ -6,7 +6,7 @@ import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, Pr
  * [x] TODO: USER와의 관계 설정
  */
 
-@Entity('refresh_tokens') // 테이블 이름을 'users'로 설정
+@Entity('refresh_tokens') // 테이블 이름을 'refresh_tokens'로 설정
 export class RefreshToken extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;

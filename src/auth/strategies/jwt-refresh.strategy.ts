@@ -31,11 +31,13 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh-
     // password-jwt가 검증한 JWT payload를 받아 추가적인 사용자 인증 로직 수행
     async validate(req: Request, payload) {
         // console.log(payload);
-        // const refreshToken = req.cookies['refresh_token'];
+        // const refreshToken = req.cookies['refreshToken'];
         const user = await this.userService.findUserById(
             payload.userId
         );
-        // validate에서 반환된 값은 @Req()를 통해 접근 가능 (이 예시에선 req.user)
-        return user;
+        // validate에서 반환된 값은 controller에서 @Req()를 통해 접근 가능
+        // 단, 반드시 "req.user"(user가 중요!!!)로만 접근 가능함
+        // 즉, 가능하다면 유저와 관련된 최소한의 정보(사용자 ID나 이메일, 권한, 역할 등)만 return하는게 좋음
+        return payload;
     }
 }
