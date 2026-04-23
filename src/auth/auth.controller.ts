@@ -54,8 +54,7 @@ export class AuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
   ) {
-    console.log(req.user);
-    const newAccessToken = await this.authService.refreshAccessToken(req.cookies.refreshToken);
+    const newAccessToken = await this.authService.generateAccessToken(req.user);
 
     res.setHeader('Authorization', 'Bearer ' + newAccessToken);
     res.cookie('accessToken', newAccessToken, {
@@ -73,7 +72,6 @@ export class AuthController {
   // 로그아웃 시 refresh token의 유효성을 검사하여 인증된 사용자만 로그아웃할 수 있도록 함
   @UseGuards(JwtRefreshGuard)
   async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
-    // console.log(req.cookies);
     await this.authService.removeRefreshToken(req.cookies.refreshToken);
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
