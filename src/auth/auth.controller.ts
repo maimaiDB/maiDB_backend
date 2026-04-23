@@ -1,8 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpCode, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
-import { LogoutDto } from './dto/logout.dto';
 import { Response } from 'express';
 import { InvalidJwtFormatException, TokenExpiredException, InvalidJwtTokenException } from 'src/common/exception/service.exception';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
@@ -49,50 +47,25 @@ export class AuthController {
     };
   }
 
+  // [x] TODO: jwt-refresh guard를 사용하도록 변경. 이 guard는 refresh token의 유효성을 검사하여 인증된 사용자만 access token을 재발급받을 수 있도록 함
   @Post('/refresh')
+  @UseGuards(JwtRefreshGuard)
   async refreshAccessToken(
-    @Body() refreshAccessTokenDto: RefreshAccessTokenDto,
+    @Req() req: any,
     @Res({ passthrough: true }) res: Response
   ) {
-    // refreshAccessToken에서 verifyAsync 메소드를 사용하여 refresh token가 jwt 형식에 맞는지, 만료되지 않았는지를 검증함.
-    // verifyAsync 메소드는 실패시 500 Internal Server Error를 발생시키기 때문에, 이를 처리하기 위해 try catch 사용
-    // JWT 형식 오류의 경우 error.name = ' JsonWebTokenError', error.message = 'jwt malformed'
-    // JWT 서명 불일치(JWT위조 혹은 secret 불일치)의 경우 error.name = ' JsonWebTokenError', error.message = 'invalid signature'
-    // JWT 만료 오류의 경우 error.name = 'TokenExpiredError'
-    try {
-      const newAccessToken = await this.authService.refreshAccessToken(refreshAccessTokenDto);
+    console.log(req.user);
+    const newAccessToken = await this.authService.refreshAccessToken(req.cookies.refreshToken);
 
-      res.setHeader('Authorization', 'Bearer ' + newAccessToken);
-      res.cookie('accessToken', newAccessToken, {
-        httpOnly: true,
-        // secure: true,   // HTTPS 연결에서만 쿠키 전송
-      });
+    res.setHeader('Authorization', 'Bearer ' + newAccessToken);
+    res.cookie('accessToken', newAccessToken, {
+      httpOnly: true,
+      // secure: true,   // HTTPS 연결에서만 쿠키 전송
+    });
 
-      return {
-        message: "accessToken 재발급 성공!",
-        timestamp: new Date().toISOString()
-      }
-    } catch (error) {
-      if (error.name === 'TokenExpiredError') {
-        // 토큰 만료됨
-        // 만료된 refresh token DB에서 삭제
-        // NOTE: 만약 refresh token이 오류로 인해 삭제되지 않은 경우에 대해 어떻게 대처할지 고민해볼 필요가 있음
-        this.authService.removeRefreshToken(refreshAccessTokenDto.refreshToken);
-        throw TokenExpiredException();
-      }
-
-      if (error.name === 'JsonWebTokenError') {
-        if (error.message === 'jwt malformed') {
-          // JWT 형식 오류
-          throw InvalidJwtFormatException();
-        } else if (error.message === 'invalid signature') {
-          // JWT 서명 불일치 (JWT 위조 또는 secret 불일치) 
-          throw InvalidJwtTokenException();
-        }
-      }
-
-      // 그 외의 경우
-      return error;
+    return {
+      message: "accessToken 재발급 성공!",
+      timestamp: new Date().toISOString()
     }
   }
 

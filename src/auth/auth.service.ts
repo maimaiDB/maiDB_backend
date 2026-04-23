@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
-import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
-import { LogoutDto } from './dto/logout.dto';
 import { Repository } from 'typeorm';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -70,17 +68,7 @@ export class AuthService {
     return savedRefreshToken;
   }
 
-  async refreshAccessToken(refreshAccessTokenDto: RefreshAccessTokenDto) {
-    const { refreshToken } = refreshAccessTokenDto;
-
-    const decodedRefreshToken = await this.jwtService.verifyAsync(refreshToken, {
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET')
-    });
-
-    const userId = decodedRefreshToken.userId;
-    const user = await this.userService.findUserById(userId);
-    // User가 발견되지 않은 경우 findUserById에서 exception을 던지기 때문에 여기선 처리 안함
-
+  async refreshAccessToken(user: User) {
     const newAccessToken = await this.generateAccessToken(user);
 
     return newAccessToken;
@@ -88,9 +76,5 @@ export class AuthService {
 
   async removeRefreshToken(refreshToken: string) {
     await this.refreshTokenRepository.delete({ token: refreshToken });
-  }
-
-  logout(lotougDto: LogoutDto) {
-    return `logout method`;
   }
 }
