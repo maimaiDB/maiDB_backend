@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { Request } from "express";
 import { UserService } from "src/user/user.service";
+import { TokenExpiredError } from "@nestjs/jwt";
 
 // jwt-refresh.guard.ts에서 JwtRefreshGuard가 사용할 전략(Strategy)인 'jwt-refresh-token'을 구현하는 클래스
 // JwtRefreshGuard가 실행된 후, JwtRefreshGuard의 AuthGuard('jwt-refresh-token')가 PassportStrategy(Strategy, 'jwt-refresh-token')로 지정된 JwtRefreshStrategy를 찾음
@@ -17,7 +18,8 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh-
             // 이 과정에서 passport-jwt 라이브러리가 내부적으로 jwt 토큰을 파싱하고, 토큰의 payload를 validate 메소드로 전달함
             jwtFromRequest: ExtractJwt.fromExtractors([
                 (request) => {
-                    // 쿠키 안의 refreshToken이 jwt인지를 검증
+                    // console.log(request?.cookies?.refreshToken);
+                    // password-jwt로 쿠키 안의 refreshToken이 jwt인지를 검증
                     return request?.cookies?.refreshToken;
                 },
             ]),
@@ -38,6 +40,6 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh-
         // validate에서 반환된 값은 controller에서 @Req()를 통해 접근 가능
         // 단, 반드시 "req.user"(user가 중요!!!)로만 접근 가능함
         // 즉, 가능하다면 유저와 관련된 최소한의 정보(사용자 ID나 이메일, 권한, 역할 등)만 return하는게 좋음
-        return payload;
+        return user;
     }
 }
