@@ -25,21 +25,6 @@ export class UserService {
       throw EmailAlreadyExistsException();
     }
 
-    /*
-    // 이메일 유효성 검증 실패 처리
-    if (!email || !this.isValidEmail(email)) {
-      throw new BadRequestException({
-        success: false,
-        timestamp: new Date().toISOString(),
-        error: {
-          code: 'INVALID_INPUT',
-          message: '유효하지 않은 이메일 형식입니다.',
-          path: '/users',
-        },
-      });
-    }
-    */
-
     // 사용자 생성
     const newUser = this.userRepository.create({
       email,
@@ -47,14 +32,7 @@ export class UserService {
     });
     const savedUser = await this.userRepository.save(newUser);
 
-    return {
-      success: true,
-      data: {
-        userId: savedUser.id,
-        email: savedUser.email,
-        createdAt: savedUser.createdAt,
-      },
-    };
+    return savedUser;
   }
 
   private isValidEmail(email: string): boolean {
@@ -65,16 +43,10 @@ export class UserService {
   async findAllUsers() {
     const users = await this.userRepository.find({});
 
-    // UserAdminResponseDto로 변환하여 반환
-    const responseData = plainToInstance(AdminUserResponseDto, users, {
-      // Expose된 필드만 포함하도록 설정
-      excludeExtraneousValues: true,
-    })
-
-    return responseData;
+    return users;
   }
 
-  async findOneUser(id: number) {
+  async findUserById(id: number) {
     // id 파라미터 유효성 검증 실패 처리
     if (!id) {
       throw InvalidIdFormatException();
@@ -87,12 +59,22 @@ export class UserService {
       throw UserNotFoundedException();
     }
 
-    const responseData = plainToInstance(PublicUserResponseDto, user, {
-      // Expose된 필드만 포함하도록 설정
-      excludeExtraneousValues: true,
-    });
+    return user;
+  }
 
-    return responseData;
+  async findUserByEmailWithPassword(email: string) {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .addSelect('user.password') // password 필드도 선택하여 조회
+      .where('user.email = :email', { email })
+      .getOne();
+
+    // 해당 이메일의 유저가 존재하지 않을 때 처리
+    if (!user) {
+      throw UserNotFoundedException();
+    }
+
+    return user;
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto) {

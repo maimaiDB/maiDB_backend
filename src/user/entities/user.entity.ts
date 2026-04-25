@@ -1,4 +1,5 @@
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { RefreshToken } from "src/auth/entities/refresh-token.entity";
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 /**
  * CHECKLIST
@@ -50,4 +51,7 @@ export class User extends BaseEntity {
   // 삭제된 데이터까지 조회하려면 find시 find({withDeleted: true}) 옵션을 사용해야 함
   @DeleteDateColumn()
   deletedAt: Date | null;
+
+  @OneToMany(() => RefreshToken, refreshToken => refreshToken.userId)
+  refreshTokens?: RefreshToken[];
 }
