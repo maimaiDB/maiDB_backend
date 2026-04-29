@@ -2,10 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ServiceExceptionToHttpExceptionFilter } from './common/exception/service-exception-to-http-exception-filter';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true, // DTO에 정의된 속성만 허용
     forbidNonWhitelisted: true, // 허용되지 않은 속성이 있을 경우 예외 발생
@@ -17,7 +20,7 @@ async function bootstrap() {
   app.use(cookieParser()); // 쿠키 파서 추가
 
   app.enableCors({
-    origin: 'http://localhost:3000', // 클라이언트 도메인
+    origin: configService.get<string>('CORS_ORIGIN') ?? 'http://localhost:3000',
     credentials: true, // 쿠키 허용
   });
   await app.listen(process.env.PORT ?? 3000);

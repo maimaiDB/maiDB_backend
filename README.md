@@ -30,6 +30,14 @@ DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=your_password
 DB_DATABASE=maidb-server-local
+
+JWT_ACCESS_SECRET=your_access_secret
+JWT_ACCESS_EXPIRATION_TIME= 86400
+
+JWT_REFRESH_SECRET=your_refresh_secret
+JWT_REFRESH_EXPIRATION_TIME= 1000000
+
+CORS_ORIGIN=http://localhost:3000
 ```
 
 <br>
