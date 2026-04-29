@@ -5,10 +5,11 @@ import { RefreshToken } from './entities/refresh-token.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
-import { InvalidCredentialsException } from 'src/common/exception/service.exception';
+import { InvalidCredentialsException, RefreshTokenNotFoundedException } from 'src/common/exception/service.exception';
 import { User } from 'src/user/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { get } from 'http';
 
 @Injectable()
 export class AuthService {
@@ -35,8 +36,8 @@ export class AuthService {
     // User가 발견되지 않은 경우 findUserByEmailWithPassword에서 exception을 던지기 때문에 여기선 처리 안함
     const user = await this.userService.findUserByEmailWithPassword(email);
 
-    if (password != user.password) {
-      throw InvalidCredentialsException();
+    if (!(await bcrypt.compare(password + this.configService.get<string>('BCRYPT_SALT'), user.password))) {
+      throw InvalidCredentialsException("잘못된 비밀번호입니다.");
     }
 
     return user;
@@ -58,7 +59,12 @@ export class AuthService {
   }
 
   async setRefreshToken(user: User, refreshToken: string) {
-    const hashedRefreshToken = await bcrypt.hash(refreshToken + this.configService.get<string>('BCRYPT_SALT'), parseInt(this.configService.get<string>('BCRYPT_SALT_ROUNDS') || '10'));
+    // const hashedRefreshToken = await bcrypt.hash(refreshToken + this.configService.get<string>('BCRYPT_SALT'), parseInt(this.configService.get<string>('BCRYPT_SALT_ROUNDS') || '10'));
+    const hashedRefreshToken = await bcrypt.hash(refreshToken , parseInt(this.configService.get<string>('BCRYPT_SALT_ROUNDS') || '10'));
+
+    console.log(refreshToken);
+    console.log(hashedRefreshToken);
+    
     const newRefreshToken = await this.refreshTokenRepository.create({
       token: hashedRefreshToken,
       userId: user.id,
@@ -68,6 +74,16 @@ export class AuthService {
     const savedRefreshToken = await this.refreshTokenRepository.save(newRefreshToken);
 
     return savedRefreshToken;
+  }
+
+  async getRefreshTokenById(id: number) {
+    const refreshToken = await this.refreshTokenRepository.findOne({ where: { id: id } });
+
+    if (!refreshToken) {
+      throw RefreshTokenNotFoundedException();
+    }
+
+    return refreshToken;
   }
 
   async removeRefreshToken(refreshToken: string) {

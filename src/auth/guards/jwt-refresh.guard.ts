@@ -29,6 +29,8 @@ export class JwtRefreshGuard extends AuthGuard('jwt-refresh-token') {
                 const req = context.switchToHttp().getRequest();
                 const refreshToken = req?.cookies?.refreshToken;
 
+                // [ ] TODO: refresh token이 해싱되어 저장되는 만큼, remove도 cookie의 해시 값이 아닌 refreshToken의 id 값을 기반으로 삭제하도록 변경 (refresh token이 해싱되어 저장되기 때문에, 클라이언트에서 전달된 refresh token과 DB에 저장된 해시된 토큰을 직접 비교할 수 없음)
+
                 // handleRequest는 동기적으로 호출되는 함수라 async/await를 사용하지 못함
                 // 그렇기에, 비동기 작업인 removeRefreshToken을 동기적으로 처리할 필요가 있고, 그 때문에 Promise를 명시적으로 처리함
                 this.authService.removeRefreshToken(refreshToken).catch((error) => {
