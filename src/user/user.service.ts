@@ -17,16 +17,17 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly configService: ConfigService,
   ) { }
 
   async createUser(createUserDto: CreateUserDto) {
     const { email, password } = createUserDto;
     // bcrypt 라이블러리를 사용하여 비밀번호를 해싱, salt는 .env 파일에서 관리하여 보안 강화
     // salt rounds는 해싱의 복잡도를 결정하는 값으로, 일반적으로 10 이상을 권장
-    const hashedPassword = await bcrypt.hash(password + process.env.BCRYPT_SALT, parseInt(process.env.BCRYPT_SALT_ROUNDS || '10'));
+    const hashedPassword = await bcrypt.hash(password + this.configService.get<string>('BCRYPT_SALT'), parseInt(this.configService.get<string>('BCRYPT_SALT_ROUNDS') || '10'));
     // console.log(hashedPassword);
-    // console.log(password + process.env.BCRYPT_SALT);
-    // console.log(await bcrypt.compare('1234' + process.env.BCRYPT_SALT, hashedPassword));
+    // console.log(password + this.configService.get<string>('BCRYPT_SALT'));
+    // console.log(await bcrypt.compare('1234' + this.configService.get<string>('BCRYPT_SALT'), hashedPassword));
 
     // 이메일 중복 확인
     const existingUser = await this.userRepository.findOne({ where: { email: email } });
