@@ -8,6 +8,9 @@ import { plainToInstance } from 'class-transformer';
 import { AdminUserResponseDto } from './dto/admin-user-response.dto';
 import { PublicUserResponseDto } from './dto/public-user-response.dto';
 import { EmailAlreadyExistsException, InvalidIdFormatException, UserNotFoundedException } from 'src/common/exception/service.exception';
+import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
+
 
 @Injectable()
 export class UserService {
@@ -18,6 +21,12 @@ export class UserService {
 
   async createUser(createUserDto: CreateUserDto) {
     const { email, password } = createUserDto;
+    // bcrypt 라이블러리를 사용하여 비밀번호를 해싱, salt는 .env 파일에서 관리하여 보안 강화
+    // salt rounds는 해싱의 복잡도를 결정하는 값으로, 일반적으로 10 이상을 권장
+    const hashedPassword = await bcrypt.hash(password + process.env.BCRYPT_SALT, parseInt(process.env.BCRYPT_SALT_ROUNDS || '10'));
+    // console.log(hashedPassword);
+    // console.log(password + process.env.BCRYPT_SALT);
+    // console.log(await bcrypt.compare('1234' + process.env.BCRYPT_SALT, hashedPassword));
 
     // 이메일 중복 확인
     const existingUser = await this.userRepository.findOne({ where: { email: email } });
@@ -28,7 +37,7 @@ export class UserService {
     // 사용자 생성
     const newUser = this.userRepository.create({
       email,
-      password,
+      password: hashedPassword,
     });
     const savedUser = await this.userRepository.save(newUser);
 

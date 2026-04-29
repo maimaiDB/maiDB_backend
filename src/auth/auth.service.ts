@@ -8,6 +8,7 @@ import { UserService } from 'src/user/user.service';
 import { InvalidCredentialsException } from 'src/common/exception/service.exception';
 import { User } from 'src/user/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -57,8 +58,9 @@ export class AuthService {
   }
 
   async setRefreshToken(user: User, refreshToken: string) {
+    const hashedRefreshToken = await bcrypt.hash(refreshToken + this.configService.get<string>('BCRYPT_SALT'), parseInt(this.configService.get<string>('BCRYPT_SALT_ROUNDS') || '10'));
     const newRefreshToken = await this.refreshTokenRepository.create({
-      token: refreshToken,
+      token: hashedRefreshToken,
       userId: user.id,
       expiresAt: new Date(Date.now() + parseInt(this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') || '86400', 10) * 1000),
     });
