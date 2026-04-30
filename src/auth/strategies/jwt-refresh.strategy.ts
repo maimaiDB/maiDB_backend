@@ -3,10 +3,9 @@ import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { Request } from "express";
 import { UserService } from "src/user/user.service";
-import { TokenExpiredError } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
-import * as bcrypt from 'bcrypt';
 import { AuthService } from "../auth.service";
+import { InvalidJwtTokenException } from "src/common/exception/service.exception";
 
 // jwt-refresh.guard.ts에서 JwtRefreshGuard가 사용할 전략(Strategy)인 'jwt-refresh-token'을 구현하는 클래스
 // JwtRefreshGuard가 실행된 후, JwtRefreshGuard의 AuthGuard('jwt-refresh-token')가 PassportStrategy(Strategy, 'jwt-refresh-token')로 지정된 JwtRefreshStrategy를 찾음
@@ -35,20 +34,17 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh-
         super(config);
     }
 
-    // [ ] TODO: 해당 refresh 토큰이 DB에 존재하는지 validate, 만료되진 않았는지 확인하는 로직 작성
+    // [x] TODO: 해당 refresh 토큰이 DB에 존재하는지 validate, 만료되진 않았는지 확인하는 로직 작성
     // password-jwt가 검증한 JWT payload를 받아 추가적인 사용자 인증 로직 수행
     async validate(req: Request, payload) {
         // console.log(payload);
         const refreshToken = req.cookies['refreshToken'];
-        
-        // DB에 저장된 refresh token을 가져옴
-        const hashedToken = await this.authService.getRefreshTokenById(payload.id)
 
         // DB에 저장된 refresh token과 클라이언트에서 전달된 refresh token이 일치하는지 확인
-        if(!await bcrypt.compare(refreshToken + this.configService.get<string>('BCRYPT_SALT'), hashedToken.token)) {
-            throw new UnauthorizedException("유효하지 않은 refresh token입니다.");
+        if (!await this.authService.isRefreshTokenStored(refreshToken)) {
+            throw InvalidJwtTokenException();
         }
-        
+
         const user = await this.userService.findUserById(
             payload.userId
         );
