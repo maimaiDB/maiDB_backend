@@ -24,6 +24,7 @@ export class JwtRefreshGuard extends AuthGuard('jwt-refresh-token') {
                 // 토큰 만료됨
                 // 만료된 refresh token DB에서 삭제
                 // NOTE: 만약 refresh token이 오류로 인해 삭제되지 않은 경우에 대해 어떻게 대처할지 고민해볼 필요가 있음
+                // ㄴ 일정 시간마다 만료된 토큰 지우는 기능 쓰면 될듯!
 
                 // 토큰을 삭제하기 위해 요청 객체에서 refreshToken 값을 가져옴
                 const req = context.switchToHttp().getRequest();
