@@ -1,7 +1,6 @@
 import { Injectable, BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
@@ -20,30 +19,19 @@ export class UserService {
     private readonly configService: ConfigService,
   ) { }
 
-  async createUser(createUserDto: CreateUserDto) {
-    const { email, password } = createUserDto;
-    // bcrypt 라이블러리를 사용하여 비밀번호를 해싱, salt는 .env 파일에서 관리하여 보안 강화
-    // salt rounds는 해싱의 복잡도를 결정하는 값으로, 일반적으로 10 이상을 권장
-    const hashedPassword = await bcrypt.hash(password + this.configService.get<string>('BCRYPT_SALT'), parseInt(this.configService.get<string>('BCRYPT_SALT_ROUNDS') || '10'));
-    // console.log(hashedPassword);
-    // console.log(password + this.configService.get<string>('BCRYPT_SALT'));
-    // console.log(await bcrypt.compare('1234' + this.configService.get<string>('BCRYPT_SALT'), hashedPassword));
-
-    // 이메일 중복 확인
-    const existingUser = await this.userRepository.findOne({ where: { email: email } });
-    if (existingUser) {
-      throw EmailAlreadyExistsException();
-    }
+  async createUser(email: string, password: string) {
+    // NOTE : authService에서 비밀번호 해싱을 담당. 반드시 해싱을 끝낸 password가 이 메소드로 전달되어야 함!!!
 
     // 사용자 생성
     const newUser = this.userRepository.create({
       email,
-      password: hashedPassword,
+      password,
     });
     const savedUser = await this.userRepository.save(newUser);
 
     return savedUser;
   }
+
 
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -72,17 +60,18 @@ export class UserService {
     return user;
   }
 
-  async findUserByEmailWithPassword(email: string) {
+  async findUserByEmail(email: string) {
+    const user = await this.userRepository.findOne({ where: { email: email } });
+
+    return user;
+  }
+
+  async findUserByEmailIncludePassword(email: string) {
     const user = await this.userRepository
       .createQueryBuilder('user')
       .addSelect('user.password') // password 필드도 선택하여 조회
       .where('user.email = :email', { email })
       .getOne();
-
-    // 해당 이메일의 유저가 존재하지 않을 때 처리
-    if (!user) {
-      throw UserNotFoundedException();
-    }
 
     return user;
   }

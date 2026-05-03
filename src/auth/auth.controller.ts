@@ -2,12 +2,26 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpCode, Req, 
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';
-import { InvalidJwtFormatException, TokenExpiredException, InvalidJwtTokenException } from 'src/common/exception/service.exception';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { SignUpDto } from './dto/sign-up.dto';
 
 @Controller('auths')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
+
+  @Post('/signup')
+  async signUp(@Body() signUpDto: SignUpDto) {
+    const savedUser = await this.authService.signUp(signUpDto);
+
+    return {
+      success: true,
+      data: {
+        userId: savedUser.id,
+        email: savedUser.email,
+        createdAt: savedUser.createdAt,
+      },
+    };
+  }
 
   /**
    * CHECKLIST

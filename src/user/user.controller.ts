@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { PublicUserResponseDto } from './dto/public-user-response.dto';
@@ -23,20 +22,6 @@ import { UserRole } from './enums/user-role.enum';
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) { }
-
-  @Post()
-  async createUser(@Body() createUserDto: CreateUserDto) {
-    const savedUser = await this.userService.createUser(createUserDto);
-
-    return {
-      success: true,
-      data: {
-        userId: savedUser.id,
-        email: savedUser.email,
-        createdAt: savedUser.createdAt,
-      },
-    };
-  }
 
   @Get('/test')
   @UseGuards(JwtAccessGuard, RolesGuard)
