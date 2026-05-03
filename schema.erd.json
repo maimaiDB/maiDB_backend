@@ -4,9 +4,9 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -383.6055,
-    "scrollLeft": -465.4216,
-    "zoomLevel": 0.76,
+    "scrollTop": -78.6761,
+    "scrollLeft": 0,
+    "zoomLevel": 0.88,
     "show": 431,
     "database": 4,
     "databaseName": "",
@@ -454,7 +454,7 @@
         "comment": "",
         "dataType": "INTEGER",
         "default": "0",
-        "options": 0,
+        "options": 8,
         "ui": {
           "keys": 0,
           "widthName": 60,
@@ -463,7 +463,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1776177182679,
+          "updateAt": 1777798232937,
           "createAt": 1772467612161
         }
       },
@@ -474,7 +474,7 @@
         "comment": "",
         "dataType": "INTEGER",
         "default": "0",
-        "options": 0,
+        "options": 8,
         "ui": {
           "keys": 0,
           "widthName": 76,
@@ -483,7 +483,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1776177183730,
+          "updateAt": 1777798233491,
           "createAt": 1772467616116
         }
       },
@@ -1710,10 +1710,10 @@
       "-e4vh8w04mMYPvZfCA3E9": {
         "id": "-e4vh8w04mMYPvZfCA3E9",
         "tableId": "voBvnnWdmoRawU1JV21N9",
-        "name": "is_admin",
+        "name": "role",
         "comment": "",
-        "dataType": "BOOLEAN",
-        "default": "FALSE",
+        "dataType": "VARCHAR",
+        "default": "user",
         "options": 8,
         "ui": {
           "keys": 0,
@@ -1723,7 +1723,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1776177160519,
+          "updateAt": 1777798255979,
           "createAt": 1772570539359
         }
       },
@@ -1834,7 +1834,7 @@
         "comment": "플레이 카운트",
         "dataType": "INTEGER",
         "default": "0",
-        "options": 0,
+        "options": 8,
         "ui": {
           "keys": 0,
           "widthName": 60,
@@ -1843,7 +1843,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1776177167896,
+          "updateAt": 1777798232032,
           "createAt": 1775815893092
         }
       },
@@ -1908,7 +1908,7 @@
             "UBJ8Lqg8KgLk2kOeLp33_"
           ],
           "x": 550.2603,
-          "y": 205.7808,
+          "y": 119.7808,
           "direction": 2
         },
         "end": {
