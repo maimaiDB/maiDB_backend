@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { PublicUserResponseDto } from './dto/public-user-response.dto';
 import { AdminUserResponseDto } from './dto/admin-user-response.dto';
+import { JwtAccessGuard } from 'src/auth/guards/jwt-access.guard';
 
 /** 
  * CHECKLIST
@@ -32,6 +33,12 @@ export class UserController {
         createdAt: savedUser.createdAt,
       },
     };
+  }
+
+  @Get('/test')
+  @UseGuards(JwtAccessGuard)
+  guardTest() {
+    return '테스트 성공!';
   }
 
   @Get()
