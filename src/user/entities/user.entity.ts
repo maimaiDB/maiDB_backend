@@ -1,5 +1,6 @@
 import { RefreshToken } from "src/auth/entities/refresh-token.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { UserRole } from "../enums/user-role.enum";
 
 /**
  * CHECKLIST
@@ -35,7 +36,7 @@ export class User extends BaseEntity {
   @Column({ default: true })
   isPublic: boolean;
 
-  @Column({ default: 'user' })
+  @Column({ default: UserRole.USER })
   role: string;
 
   @CreateDateColumn()

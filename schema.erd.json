@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -78.6761,
-    "scrollLeft": 0,
+    "scrollTop": -90.6761,
+    "scrollLeft": -2,
     "zoomLevel": 0.88,
     "show": 431,
     "database": 4,
@@ -1713,7 +1713,7 @@
         "name": "role",
         "comment": "",
         "dataType": "VARCHAR",
-        "default": "user",
+        "default": "USER",
         "options": 8,
         "ui": {
           "keys": 0,
@@ -1723,7 +1723,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1777798255979,
+          "updateAt": 1777798722834,
           "createAt": 1772570539359
         }
       },
