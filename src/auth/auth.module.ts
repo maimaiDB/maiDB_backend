@@ -7,6 +7,7 @@ import { RefreshToken } from './entities/refresh-token.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from 'src/user/user.module';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
+import { JwtAccessStrategy } from './strategies/jwt-access.strategy';
 
 @Module({
   imports: [
@@ -31,7 +32,9 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
   ],
   providers: [
     AuthService,
+    // guard가 사용하는 Strategy들을 주입
     JwtRefreshStrategy,
+    JwtAccessStrategy,
   ],
 })
 export class AuthModule { }
