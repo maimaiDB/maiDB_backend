@@ -5,11 +5,12 @@ import { RefreshToken } from './entities/refresh-token.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
-import { InvalidCredentialsException, RefreshTokenNotFoundedException } from 'src/common/exception/service.exception';
+import { EmailAlreadyExistsException, InvalidCredentialsException, RefreshTokenNotFoundedException, UserNotFoundedException } from 'src/common/exception/service.exception';
 import { User } from 'src/user/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { get } from 'http';
+import { SignUpDto } from './dto/sign-up.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) { }
 
+
   /** 
    *  CHECKLIST
     * [x] TODO: generateAccessToken 및 generateRefreshToken 메소드 작성
@@ -29,12 +31,43 @@ export class AuthService {
     * [x] TODO: refresh token 저장 및 관리 로직 구현 (DB에 저장, 만료된 토큰 삭제 등)
     * [x] TODO: Guard를 사용해 인증된 사용자만 접근할 수 있는 API 구현
    */
+
+  async signUp(signUpDto: SignUpDto) {
+    const { email, password } = signUpDto;
+
+    // 이메일 중복 확인
+    const existingUser = await this.userService.findUserByEmail(email);
+
+    // 해당 이메일의 유저가 이미 존재할 때 예외 처리
+    if (existingUser) {
+      throw EmailAlreadyExistsException();
+    }
+
+    // 비밀번호 해싱
+    const hashedPassword = await this.hashPassword(password);
+
+    // 사용자 생성
+    const savedUser = await this.userService.createUser(email, hashedPassword);
+
+    return savedUser;
+  }
+
+  async hashPassword(password: string) {
+    // bcrypt 라이브러리를 사용하여 비밀번호를 해싱, salt는 .env 파일에서 관리하여 보안 강화
+    // salt rounds는 해싱의 복잡도를 결정하는 값으로, 일반적으로 10 이상을 권장
+    return await bcrypt.hash(password + this.configService.get<string>('BCRYPT_SALT'), parseInt(this.configService.get<string>('BCRYPT_SALT_ROUNDS') || '10'))
+  }
+
   async validateUser(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
     // 이메일로 사용자 조회
-    // User가 발견되지 않은 경우 findUserByEmailWithPassword에서 exception을 던지기 때문에 여기선 처리 안함
-    const user = await this.userService.findUserByEmailWithPassword(email);
+    const user = await this.userService.findUserByEmailIncludePassword(email);
+
+    // 해당 이메일의 유저가 존재하지 않을 때 예외 처리
+    if (!user) {
+      throw UserNotFoundedException();
+    }
 
     if (!(await bcrypt.compare(password + this.configService.get<string>('BCRYPT_SALT'), user.password))) {
       throw InvalidCredentialsException("잘못된 비밀번호입니다.");
