@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
@@ -8,8 +19,9 @@ import { JwtAccessGuard } from 'src/auth/guards/jwt-access.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from './enums/user-role.enum';
+import { SelfGuard } from './guards/self.guard';
 
-/** 
+/**
  * CHECKLIST
  * [x] TODO: DB 연결
  * [ ] TODO: CRUD API 구현
@@ -21,7 +33,7 @@ import { UserRole } from './enums/user-role.enum';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Get('/test')
   @UseGuards(JwtAccessGuard, RolesGuard)
@@ -31,6 +43,8 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(JwtAccessGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   async findAllUsers() {
     const users = await this.userService.findAllUsers();
 
@@ -38,13 +52,13 @@ export class UserController {
     const responseData = plainToInstance(AdminUserResponseDto, users, {
       // Expose된 필드만 포함하도록 설정
       excludeExtraneousValues: true,
-    })
+    });
 
     return responseData;
   }
 
   @Get(':id')
-  async findOneUser(@Param('id') id: number) {
+  async findOneUser(@Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.findUserById(id);
 
     const responseData = plainToInstance(PublicUserResponseDto, user, {
@@ -56,12 +70,19 @@ export class UserController {
   }
 
   @Patch(':id')
-  updateUser(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+  @UseGuards(JwtAccessGuard, RolesGuard, SelfGuard)
+  @Roles(UserRole.ADMIN, UserRole.USER)
+  updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return this.userService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
-  removeUser(@Param('id') id: string) {
-    return this.userService.removeUser(+id);
+  @UseGuards(JwtAccessGuard, RolesGuard, SelfGuard)
+  @Roles(UserRole.ADMIN, UserRole.USER)
+  removeUser(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.removeUser(id);
   }
 }
