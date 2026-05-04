@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -6,10 +11,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { AdminUserResponseDto } from './dto/admin-user-response.dto';
 import { PublicUserResponseDto } from './dto/public-user-response.dto';
-import { EmailAlreadyExistsException, InvalidIdFormatException, UserNotFoundedException } from 'src/common/exception/service.exception';
+import {
+  EmailAlreadyExistsException,
+  InvalidIdFormatException,
+  UserNotFoundedException,
+} from 'src/common/exception/service.exception';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-
 
 @Injectable()
 export class UserService {
