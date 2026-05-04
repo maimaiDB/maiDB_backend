@@ -17,21 +17,32 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly configService: ConfigService,
-  ) { }
+  ) {}
 
   async createUser(email: string, password: string) {
     // NOTE : authService에서 비밀번호 해싱을 담당. 반드시 해싱을 끝낸 password가 이 메소드로 전달되어야 함!!!
 
+    // 비밀번호 해싱
+    const hashedPassword = await this.hashPassword(password);
+
     // 사용자 생성
     const newUser = this.userRepository.create({
       email,
-      password,
+      password: hashedPassword,
     });
     const savedUser = await this.userRepository.save(newUser);
 
     return savedUser;
   }
 
+  async hashPassword(password: string) {
+    // bcrypt 라이브러리를 사용하여 비밀번호를 해싱, salt는 .env 파일에서 관리하여 보안 강화
+    // salt rounds는 해싱의 복잡도를 결정하는 값으로, 일반적으로 10 이상을 권장
+    return await bcrypt.hash(
+      password + this.configService.get<string>('BCRYPT_SALT'),
+      parseInt(this.configService.get<string>('BCRYPT_SALT_ROUNDS') || '10'),
+    );
+  }
 
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
