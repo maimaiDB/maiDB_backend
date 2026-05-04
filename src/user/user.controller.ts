@@ -31,6 +31,8 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(JwtAccessGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   async findAllUsers() {
     const users = await this.userService.findAllUsers();
 
@@ -56,11 +58,15 @@ export class UserController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAccessGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.USER)
   updateUser(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAccessGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.USER)
   removeUser(@Param('id') id: string) {
     return this.userService.removeUser(+id);
   }
