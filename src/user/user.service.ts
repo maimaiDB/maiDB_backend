@@ -49,6 +49,13 @@ export class UserService {
     return emailRegex.test(email);
   }
 
+  async isEmailTaken(email: string) {
+    console.log('Checking email:', email);
+    const user = await this.userRepository.findOne({ where: { email } });
+    console.log('Found user:', user);
+    return !!user;
+  }
+
   async findAllUsers() {
     const users = await this.userRepository.find({});
 
@@ -93,7 +100,8 @@ export class UserService {
       throw InvalidIdFormatException();
     }
 
-    if (await this.userRepository.findOne({ where: { email: updateUserDto.email } })) {
+    // 변경하려는 이메일이 이미 존재하는 이메일인지 확인
+    if (updateUserDto.email && (await this.isEmailTaken(updateUserDto.email))) {
       throw EmailAlreadyExistsException();
     }
 

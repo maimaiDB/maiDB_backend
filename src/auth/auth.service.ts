@@ -39,11 +39,8 @@ export class AuthService {
   async signUp(signUpDto: SignUpDto) {
     const { email, password } = signUpDto;
 
-    // 이메일 중복 확인
-    const existingUser = await this.userService.findUserByEmail(email);
-
     // 해당 이메일의 유저가 이미 존재할 때 예외 처리
-    if (existingUser) {
+    if (await this.userService.isEmailTaken(email)) {
       throw EmailAlreadyExistsException();
     }
 
@@ -57,6 +54,7 @@ export class AuthService {
     const { email, password } = loginDto;
 
     // 이메일로 사용자 조회
+    // password도 비교를 위해 DB에서 꺼내와야 하기 때문에, findUserByEmail이 아닌 findUserByEmailIncludePassword 메소드 사용
     const user = await this.userService.findUserByEmailIncludePassword(email);
 
     // 해당 이메일의 유저가 존재하지 않을 때 예외 처리
@@ -64,6 +62,7 @@ export class AuthService {
       throw UserNotFoundedException();
     }
 
+    // 비밀번호가 맞는지 확인
     if (
       !(await bcrypt.compare(
         password + this.configService.get<string>('BCRYPT_SALT'),
