@@ -75,7 +75,6 @@ export class UserController {
   updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
-    @Req() req: any,
   ) {
     return this.userService.updateUser(id, updateUserDto);
   }

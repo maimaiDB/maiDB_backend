@@ -113,6 +113,11 @@ export class UserService {
       throw EmailAlreadyExistsException();
     }
 
+    // 비밀번호 해싱 - updateUserDto에 password 필드가 존재할 때만 해싱 수행
+    if (updateUserDto.password) {
+      updateUserDto.password = await this.hashPassword(updateUserDto.password);
+    }
+
     const user = await this.userRepository.preload({
       id: id,
       ...updateUserDto,
