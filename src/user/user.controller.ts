@@ -40,13 +40,13 @@ export class UserController {
     const responseData = plainToInstance(AdminUserResponseDto, users, {
       // Expose된 필드만 포함하도록 설정
       excludeExtraneousValues: true,
-    })
+    });
 
     return responseData;
   }
 
   @Get(':id')
-  async findOneUser(@Param('id') id: number) {
+  async findOneUser(@Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.findUserById(id);
 
     const responseData = plainToInstance(PublicUserResponseDto, user, {
@@ -60,14 +60,19 @@ export class UserController {
   @Patch(':id')
   @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.USER)
-  updateUser(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+  updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: any,
+  ) {
+    console.log(req);
     return this.userService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.USER)
-  removeUser(@Param('id') id: string) {
-    return this.userService.removeUser(+id);
+  removeUser(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.removeUser(id);
   }
 }
