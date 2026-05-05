@@ -20,11 +20,11 @@ export class SelfGuard implements CanActivate {
       throw UserNotFoundedException();
     }
 
-    // 요청을 보낸 사용자(user)가 요청 대상 사용자(targetUserId)와 일치하지 않거나, 요청을 보낸 사용자가 ADMIN이 아닐 경우 접근 거부
-    if (user.id !== targetUserId && user.role !== UserRole.ADMIN) {
-      throw AccessDeniedException();
+    // 요청을 보낸 사용자(user)가 요청 대상 사용자(targetUserId)거나, 요청을 보낸 사용자가 ADMIN일 경우 접근 허가
+    if (user.id === targetUserId || user.role === UserRole.ADMIN) {
+      return true;
     }
 
-    return true;
+    throw AccessDeniedException();
   }
 }

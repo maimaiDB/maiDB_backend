@@ -16,8 +16,8 @@ import { plainToInstance } from 'class-transformer';
 import { PublicUserResponseDto } from './dto/public-user-response.dto';
 import { AdminUserResponseDto } from './dto/admin-user-response.dto';
 import { JwtAccessGuard } from 'src/auth/guards/jwt-access.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/user/guards/roles.guard';
+import { Roles } from 'src/user/decorators/roles.decorator';
 import { UserRole } from './enums/user-role.enum';
 import { SelfGuard } from './guards/self.guard';
 
