@@ -58,9 +58,8 @@ export class UserService {
   }
 
   async isEmailTaken(email: string) {
-    console.log('Checking email:', email);
     const user = await this.userRepository.findOne({ where: { email } });
-    console.log('Found user:', user);
+
     return !!user;
   }
 
