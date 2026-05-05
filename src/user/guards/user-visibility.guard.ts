@@ -12,7 +12,7 @@ export class UserVisibilityGuard implements CanActivate {
         const user = req.user; // null 가능
         const targetUserId = Number(req.params.id);
 
-        const targetUser = await this.userService.findUserById(targetUserId);
+        const targetUser = await this.userService.findUserByIdOrFail(targetUserId);
 
         // 공개 계정이면 누구나 허용
         if (targetUser.isPublic) {

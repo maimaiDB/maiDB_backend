@@ -33,7 +33,7 @@ import { SelfGuard } from './guards/self.guard';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Get('/test')
   @UseGuards(JwtAccessGuard, RolesGuard)
@@ -59,7 +59,7 @@ export class UserController {
 
   @Get(':id')
   async findOneUser(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.userService.findUserById(id);
+    const user = await this.userService.findUserByIdOrFail(id);
 
     const responseData = plainToInstance(PublicUserResponseDto, user, {
       // Expose된 필드만 포함하도록 설정

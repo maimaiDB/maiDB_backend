@@ -25,7 +25,7 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   async createUser(email: string, password: string) {
     // NOTE : authService에서 비밀번호 해싱을 담당. 반드시 해싱을 끝낸 password가 이 메소드로 전달되어야 함!!!
@@ -70,7 +70,7 @@ export class UserService {
     return users;
   }
 
-  async findUserById(id: number) {
+  async findUserByIdOrFail(id: number) {
     // id 파라미터 유효성 검증 실패 처리
     if (!id) {
       throw InvalidIdFormatException();
