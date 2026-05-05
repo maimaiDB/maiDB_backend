@@ -8,9 +8,9 @@ export class UserVisibilityGuard implements CanActivate {
     constructor(private readonly userService: UserService) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const req = context.switchToHttp().getRequest();
-        const user = req.user; // null 가능
-        const targetUserId = Number(req.params.id);
+        const request = context.switchToHttp().getRequest();
+        const user = request.user; // null 가능
+        const targetUserId = Number(request.params.id);
 
         const targetUser = await this.userService.findUserByIdOrFail(targetUserId);
 
@@ -24,7 +24,6 @@ export class UserVisibilityGuard implements CanActivate {
             throw AccessDeniedException();
         }
 
-        // 본인 또는 관리자 허용
         if (user.id === targetUserId || user.role === UserRole.ADMIN) {
             return true;
         }
