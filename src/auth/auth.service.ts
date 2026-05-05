@@ -25,7 +25,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   /**
    *  CHECKLIST
@@ -40,7 +40,7 @@ export class AuthService {
     const { email, password } = signUpDto;
 
     // 해당 이메일의 유저가 이미 존재할 때 예외 처리
-    if (await this.userService.isEmailTaken(email)) {
+    if (await this.userService.isEmailAlreadyUsed(email)) {
       throw EmailAlreadyExistsException();
     }
 
@@ -55,7 +55,7 @@ export class AuthService {
 
     // 이메일로 사용자 조회
     // password도 비교를 위해 DB에서 꺼내와야 하기 때문에, findUserByEmail이 아닌 findUserByEmailIncludePassword 메소드 사용
-    const user = await this.userService.findUserByEmailIncludePassword(email);
+    const user = await this.userService.findUserWithPasswordByEmail(email);
 
     // 해당 이메일의 유저가 존재하지 않을 때 예외 처리
     if (!user) {
@@ -96,7 +96,7 @@ export class AuthService {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       expiresIn: parseInt(
         this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') ||
-          '86400',
+        '86400',
         10,
       ),
     });
@@ -108,12 +108,12 @@ export class AuthService {
       userId: user.id,
       expiresAt: new Date(
         Date.now() +
-          parseInt(
-            this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') ||
-              '86400',
-            10,
-          ) *
-            1000,
+        parseInt(
+          this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') ||
+          '86400',
+          10,
+        ) *
+        1000,
       ),
     });
 

@@ -40,7 +40,7 @@ export class UserController {
   @Get()
   @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  async findAllUsers() {
+  async getUsers() {
     const users = await this.userService.findAllUsers();
 
     // UserAdminResponseDto로 변환하여 반환
@@ -54,7 +54,7 @@ export class UserController {
 
   @Get(':id')
   @UseGuards(JwtOptionalAuthGuard, UserVisibilityGuard)
-  async findOneUser(@Param('id', ParseIntPipe) id: number) {
+  async getUser(@Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.findUserByIdOrFail(id);
 
     const responseData = plainToInstance(PublicUserResponseDto, user, {
@@ -78,7 +78,7 @@ export class UserController {
   @Delete(':id')
   @UseGuards(JwtAccessGuard, RolesGuard, SelfGuard)
   @Roles(UserRole.ADMIN, UserRole.USER)
-  removeUser(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.removeUser(id);
+  deleteUser(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.deleteUser(id);
   }
 }

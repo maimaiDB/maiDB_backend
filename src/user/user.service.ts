@@ -43,7 +43,7 @@ export class UserService {
     return savedUser;
   }
 
-  async hashPassword(password: string) {
+  private async hashPassword(password: string) {
     // bcrypt 라이브러리를 사용하여 비밀번호를 해싱, salt는 .env 파일에서 관리하여 보안 강화
     // salt rounds는 해싱의 복잡도를 결정하는 값으로, 일반적으로 10 이상을 권장
     return await bcrypt.hash(
@@ -57,7 +57,7 @@ export class UserService {
     return emailRegex.test(email);
   }
 
-  async isEmailTaken(email: string) {
+  async isEmailAlreadyUsed(email: string) {
     const user = await this.userRepository.findOne({ where: { email } });
 
     return !!user;
@@ -91,7 +91,7 @@ export class UserService {
     return user;
   }
 
-  async findUserByEmailIncludePassword(email: string) {
+  async findUserWithPasswordByEmail(email: string) {
     const user = await this.userRepository
       .createQueryBuilder('user')
       .addSelect('user.password') // password 필드도 선택하여 조회
@@ -108,7 +108,7 @@ export class UserService {
     }
 
     // 변경하려는 이메일이 이미 존재하는 이메일인지 확인
-    if (updateUserDto.email && (await this.isEmailTaken(updateUserDto.email))) {
+    if (updateUserDto.email && (await this.isEmailAlreadyUsed(updateUserDto.email))) {
       throw EmailAlreadyExistsException();
     }
 
@@ -132,7 +132,7 @@ export class UserService {
     return updatedUser;
   }
 
-  async removeUser(id: number) {
+  async deleteUser(id: number) {
     // id 파라미터 유효성 검증 실패 처리
     if (!id) {
       throw InvalidIdFormatException();
