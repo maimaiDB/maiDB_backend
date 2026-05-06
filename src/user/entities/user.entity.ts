@@ -13,7 +13,7 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   // password 필드는 기본적으로 조회되지 않도록 설정

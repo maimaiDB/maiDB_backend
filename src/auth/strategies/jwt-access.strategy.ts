@@ -28,7 +28,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt-access-to
 
     async validate(req: Request, payload) {
 
-        const user = await this.userService.findUserById(
+        const user = await this.userService.findUserByIdOrFail(
             payload.userId
         );
         // validate에서 반환된 값은 controller에서 @Req()를 통해 접근 가능

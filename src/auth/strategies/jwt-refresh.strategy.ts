@@ -45,7 +45,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh-
             throw InvalidJwtTokenException();
         }
 
-        const user = await this.userService.findUserById(
+        const user = await this.userService.findUserByIdOrFail(
             payload.userId
         );
         // validate에서 반환된 값은 controller에서 @Req()를 통해 접근 가능
