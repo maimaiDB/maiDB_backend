@@ -4,6 +4,7 @@ import { UpdateSongDto } from './dto/update-song.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Song } from './entities/song.entity';
 import { Repository } from 'typeorm';
+import { SongNotFoundedException, SongTitleAlreadyExistsException } from 'src/common/exception/service.exception';
 
 @Injectable()
 export class SongService {
@@ -37,8 +38,22 @@ export class SongService {
     return `This action returns a #${id} song`;
   }
 
-  update(id: number, updateSongDto: UpdateSongDto) {
-    return `This action updates a #${id} song`;
+  async updateSong(id: number, updateSongDto: UpdateSongDto) {
+
+    if (updateSongDto.title && await this.isTitleAlreadyExisted(updateSongDto.title)) {
+      throw SongTitleAlreadyExistsException();
+    }
+
+    const song = await this.songRepository.preload({
+      id: id,
+      ...updateSongDto,
+    });
+
+    if (!song) {
+      throw SongNotFoundedException();
+    }
+
+    return await this.songRepository.save(song);
   }
 
   remove(id: number) {
