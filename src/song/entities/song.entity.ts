@@ -7,32 +7,33 @@ export class Song extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ nullable: false })
+    @Column({ nullable: false, unique: true })
     title: string;
 
-    @Column()
+    @Column({ nullable: true })
     artist: string;
 
-    // 범주명
     @Column({
+        nullable: true,
         type: "enum", // enum 타입 지정
         enum: Genre, // Genre enum 사용
     })
     genre: Genre;
 
     // 표기 bpm
-    @Column()
+    @Column({ nullable: true })
     bpm: number;
 
     // 최저 bpm
-    @Column()
+    @Column({ nullable: true })
     minBpm: number;
 
     // 최고 bpm
-    @Column()
+    @Column({ nullable: true })
     maxBpm: number;
 
     @Column({
+        nullable: true,
         type: "enum", // enum 타입 지정
         enum: Version, // Version enum 사용
     })
