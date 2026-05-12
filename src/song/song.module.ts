@@ -8,7 +8,6 @@ import { AuthModule } from 'src/auth/auth.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Song]),
-    AuthModule,
   ],
   controllers: [SongController],
   providers: [SongService],
