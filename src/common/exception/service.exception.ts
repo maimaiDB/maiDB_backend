@@ -1,4 +1,4 @@
-import { EMAIL_ALREADY_EXISTS, ErrorCode, INVALID_CREDENTIALS, INVALID_ID_FORMAT, INVALID_JWT_FORMAT, INVALID_JWT_TOKEN, REFRESH_TOKEN_NOT_FOUND, TOKEN_EXPIRED, USER_NOT_FOUNDED, ACCESS_DENIED, SONG_TITLE_ALREADY_EXISTS } from "./error.code";
+import { EMAIL_ALREADY_EXISTS, ErrorCode, INVALID_CREDENTIALS, INVALID_ID_FORMAT, INVALID_JWT_FORMAT, INVALID_JWT_TOKEN, REFRESH_TOKEN_NOT_FOUND, TOKEN_EXPIRED, USER_NOT_FOUNDED, ACCESS_DENIED, SONG_TITLE_ALREADY_EXISTS, SONG_NOT_FOUNDED } from "./error.code";
 
 // error 클래스를 상속받은 ServiceException 클래스 정의
 // serviceException 클래스는 NestJS의 ExceptionFilter에서 감지하기 위한 커스텀 예외 클래스
@@ -40,6 +40,10 @@ export const AccessDeniedException = (message?: string): ServiceException => {
 
 export const UserNotFoundedException = (message?: string): ServiceException => {
     return new ServiceException(USER_NOT_FOUNDED, message);
+}
+
+export const SongNotFoundedException = (message?: string): ServiceException => {
+    return new ServiceException(SONG_NOT_FOUNDED, message);
 }
 
 export const RefreshTokenNotFoundedException = (message?: string): ServiceException => {
