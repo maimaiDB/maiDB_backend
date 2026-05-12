@@ -43,7 +43,9 @@ export class SongController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.songService.remove(+id);
+  @UseGuards(JwtAccessGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.songService.remove(id);
   }
 }

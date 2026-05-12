@@ -57,7 +57,7 @@ export class SongService {
     return await this.songRepository.save(song);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} song`;
+  async remove(id: number) {
+    return await this.songRepository.delete(id);
   }
 }
