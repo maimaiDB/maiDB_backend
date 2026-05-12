@@ -14,7 +14,6 @@ export class SongService {
   ) { }
 
   async createSong(createSongDto: CreateSongDto) {
-
     const newSong = await this.songRepository.create({ ...createSongDto });
 
     return await this.songRepository.save(newSong);
@@ -36,12 +35,8 @@ export class SongService {
     return song;
   }
 
-  findAll() {
-    return `This action returns all song`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} song`;
+  async getSongs() {
+    return await this.songRepository.find({});;
   }
 
   async updateSong(id: number, updateSongDto: UpdateSongDto) {

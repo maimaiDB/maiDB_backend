@@ -26,13 +26,10 @@ export class SongController {
   }
 
   @Get()
-  findAll() {
-    return this.songService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.songService.findOne(+id);
+  @UseGuards(JwtAccessGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async getSongs() {
+    return await this.songService.getSongs();
   }
 
   @Patch(':id')
