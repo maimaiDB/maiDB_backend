@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { SongModule } from './song/song.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { SongModule } from './song/song.module';
     TypeOrmModule.forRoot(typeOrmModuleOptions),
     UserModule,
     AuthModule,
-    SongModule
+    SongModule,
+    TagModule
   ],
   controllers: [AppController],
   providers: [AppService],
