@@ -57,7 +57,13 @@ export class TagService {
     return await this.tagRepository.save(tag);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tag`;
+  async remove(id: number) {
+    const response = await this.tagRepository.delete(id);
+
+    if (response.affected === 0) {
+      throw TagNotFoundedException();
+    }
+
+    return response;
   }
 }

@@ -45,7 +45,7 @@ export class TagController {
   @Get()
   @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  remove(@Param('id') id: string) {
-    return this.tagService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.tagService.remove(id);
   }
 }
