@@ -1,15 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { JwtAccessGuard } from 'src/auth/guards/jwt-access.guard';
+import { Roles } from 'src/user/decorators/roles.decorator';
+import { RolesGuard } from 'src/user/guards/roles.guard';
+import { UserRole } from 'src/user/enums/user-role.enum';
+import { TagNameAlreadyExistsException } from 'src/common/exception/service.exception';
 
-@Controller('tag')
+@Controller('tags')
 export class TagController {
-  constructor(private readonly tagService: TagService) {}
+  constructor(private readonly tagService: TagService) { }
 
   @Post()
-  create(@Body() createTagDto: CreateTagDto) {
-    return this.tagService.create(createTagDto);
+  @UseGuards(JwtAccessGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async createTag(@Body() createTagDto: CreateTagDto) {
+    if (await this.tagService.isTagNameAlreadyExisted(createTagDto.tagName)) {
+      throw TagNameAlreadyExistsException();
+    }
+
+    return this.tagService.createTag(createTagDto);
   }
 
   @Get()

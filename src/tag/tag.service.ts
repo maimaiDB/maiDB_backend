@@ -1,11 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { Repository } from 'typeorm';
+import { Tag } from './entities/tag.entity';
+import { TagNotFoundedException } from 'src/common/exception/service.exception';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TagService {
-  create(createTagDto: CreateTagDto) {
-    return 'This action adds a new tag';
+  constructor(
+    @InjectRepository(Tag)
+    private readonly tagRepository: Repository<Tag>,
+  ) { }
+
+  async createTag(createTagDto: CreateTagDto) {
+    const newTag = await this.tagRepository.create({ ...createTagDto });
+
+    return await this.tagRepository.save(newTag);
+  }
+
+  async isTagNameAlreadyExisted(tagName: string) {
+    const tag = await this.tagRepository.findOne({ where: { tagName } });
+
+    return !!tag;
+  }
+
+  async findTagByTagNameOrFail(tagName: string) {
+    const tag = await this.tagRepository.findOne({ where: { tagName } });;
+
+    if (!tag) {
+      throw TagNotFoundedException();
+    }
+
+    return tag;
   }
 
   findAll() {
