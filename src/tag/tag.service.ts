@@ -3,7 +3,7 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { Repository } from 'typeorm';
 import { Tag } from './entities/tag.entity';
-import { TagNotFoundedException } from 'src/common/exception/service.exception';
+import { TagNameAlreadyExistsException, TagNotFoundedException } from 'src/common/exception/service.exception';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -39,12 +39,22 @@ export class TagService {
     return await this.tagRepository.find({});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tag`;
-  }
+  async updateTag(id: number, updateTagDto: UpdateTagDto) {
 
-  update(id: number, updateTagDto: UpdateTagDto) {
-    return `This action updates a #${id} tag`;
+    if (updateTagDto.tagName && await this.isTagNameAlreadyExisted(updateTagDto.tagName)) {
+      throw TagNameAlreadyExistsException();
+    }
+
+    const tag = await this.tagRepository.preload({
+      id: id,
+      ...updateTagDto,
+    });
+
+    if (!tag) {
+      throw TagNotFoundedException();
+    }
+
+    return await this.tagRepository.save(tag);
   }
 
   remove(id: number) {
