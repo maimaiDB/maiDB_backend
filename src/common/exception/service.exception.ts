@@ -1,4 +1,4 @@
-import { EMAIL_ALREADY_EXISTS, ErrorCode, INVALID_CREDENTIALS, INVALID_ID_FORMAT, INVALID_JWT_FORMAT, INVALID_JWT_TOKEN, REFRESH_TOKEN_NOT_FOUND, TOKEN_EXPIRED, USER_NOT_FOUNDED, ACCESS_DENIED, SONG_TITLE_ALREADY_EXISTS, SONG_NOT_FOUNDED } from "./error.code";
+import { EMAIL_ALREADY_EXISTS, ErrorCode, INVALID_CREDENTIALS, INVALID_ID_FORMAT, INVALID_JWT_FORMAT, INVALID_JWT_TOKEN, REFRESH_TOKEN_NOT_FOUND, TOKEN_EXPIRED, USER_NOT_FOUNDED, ACCESS_DENIED, SONG_TITLE_ALREADY_EXISTS, SONG_NOT_FOUNDED, TAG_NAME_NOT_FOUNDED, TAG_NAME_ALREADY_EXISTS } from "./error.code";
 
 // error 클래스를 상속받은 ServiceException 클래스 정의
 // serviceException 클래스는 NestJS의 ExceptionFilter에서 감지하기 위한 커스텀 예외 클래스
@@ -46,6 +46,10 @@ export const SongNotFoundedException = (message?: string): ServiceException => {
     return new ServiceException(SONG_NOT_FOUNDED, message);
 }
 
+export const TagNotFoundedException = (message?: string): ServiceException => {
+    return new ServiceException(TAG_NAME_NOT_FOUNDED, message);
+}
+
 export const RefreshTokenNotFoundedException = (message?: string): ServiceException => {
     return new ServiceException(REFRESH_TOKEN_NOT_FOUND, message);
 }
@@ -56,4 +60,8 @@ export const EmailAlreadyExistsException = (message?: string): ServiceException 
 
 export const SongTitleAlreadyExistsException = (message?: string): ServiceException => {
     return new ServiceException(SONG_TITLE_ALREADY_EXISTS, message);
+}
+
+export const TagNameAlreadyExistsException = (message?: string): ServiceException => {
+    return new ServiceException(TAG_NAME_ALREADY_EXISTS, message);
 }
