@@ -35,8 +35,8 @@ export class TagService {
     return tag;
   }
 
-  findAll() {
-    return `This action returns all tag`;
+  async getTags() {
+    return await this.tagRepository.find({});
   }
 
   findOne(id: number) {

@@ -24,8 +24,10 @@ export class TagController {
   }
 
   @Get()
-  findAll() {
-    return this.tagService.findAll();
+  @UseGuards(JwtAccessGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  getTags() {
+    return this.tagService.getTags();
   }
 
   @Get(':id')
