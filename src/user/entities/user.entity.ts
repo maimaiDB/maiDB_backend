@@ -1,6 +1,7 @@
 import { RefreshToken } from "src/auth/entities/refresh-token.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserRole } from "../enums/user-role.enum";
+import { Profile } from "src/profile/entities/profile.entity";
 
 /**
  * CHECKLIST
@@ -20,18 +21,6 @@ export class User extends BaseEntity {
   // 필요시엔 createQueryBuilder에서 addSelect를 통해 명시적으로 select할 수 있음
   @Column({ select: false })
   password: string;
-
-  @Column({ nullable: true })
-  nickname: string;
-
-  @Column({ default: 0 })
-  playCount: number;
-
-  @Column({ default: 0 })
-  maxRating: number;
-
-  @Column({ default: 0 })
-  currentRating: number;
 
   @Column({ default: true })
   isPublic: boolean;
@@ -53,6 +42,9 @@ export class User extends BaseEntity {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @OneToMany(() => RefreshToken, refreshToken => refreshToken.userId)
+  @OneToMany(() => RefreshToken, refreshToken => refreshToken.user)
   refreshTokens?: RefreshToken[];
+
+  @OneToMany(() => Profile, profile => profile.user)
+  profiles?: Profile[];
 }
