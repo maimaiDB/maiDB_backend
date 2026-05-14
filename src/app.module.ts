@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { SongModule } from './song/song.module';
 import { TagModule } from './tag/tag.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { TagModule } from './tag/tag.module';
     UserModule,
     AuthModule,
     SongModule,
-    TagModule
+    TagModule,
+    ProfileModule
   ],
   controllers: [AppController],
   providers: [AppService],
