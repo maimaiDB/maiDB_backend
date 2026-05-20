@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { SongModule } from './song/song.module';
 import { TagModule } from './tag/tag.module';
 import { ProfileModule } from './profile/profile.module';
+import { QueueModule } from './infrastructure/queue/queue.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { ProfileModule } from './profile/profile.module';
     AuthModule,
     SongModule,
     TagModule,
-    ProfileModule
+    ProfileModule,
+    QueueModule,
   ],
   controllers: [AppController],
   providers: [AppService],
