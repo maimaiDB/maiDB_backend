@@ -6,6 +6,8 @@ import { Region } from './enums/region.enum';
 import { GetProfileParamDto } from './dto/get-profile-param.dto';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { JwtAccessGuard } from 'src/auth/guards/jwt-access.guard';
+import { SyncProfileParamDto } from './dto/sync-profile-param.dto';
 
 @Controller('profiles')
 export class ProfileController {
@@ -15,9 +17,22 @@ export class ProfileController {
     private readonly queue: Queue,
   ) { }
 
-  @Post()
-  create(@Body() createProfileDto: CreateProfileDto) {
-    return this.profileService.create(createProfileDto);
+  // 프로필 동기화
+  // 
+  @Post(':region')
+  @UseGuards(JwtAccessGuard)
+  async syncProfile(
+    @Param() params: SyncProfileParamDto,
+    @Body() createProfileDto: CreateProfileDto,
+    @Req() req: any,
+  ) {
+    const { region } = params;
+
+    if (!await this.profileService.isProfileExistByRegionAndUserId(region, req.user)) {
+      console.log("오마이깠!");
+    }
+
+    return '';
   }
 
   @Get()

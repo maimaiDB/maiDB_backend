@@ -8,6 +8,7 @@ import { ProfileNotFoundedException } from 'src/common/exception/service.excepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class ProfileService {
@@ -50,6 +51,15 @@ export class ProfileService {
     }
 
     return profile;
+  }
+
+  async isProfileExistByRegionAndUserId(region: Region, user: User): Promise<boolean> {
+    console.log("isProfileExistByRegionAndUserId called with region:", region, "user:", user);
+    const profile = await this.profileRepository.findOne({
+      where: { region, user: { id: user.id } }
+    });
+    console.log("Profile found:", profile);
+    return !!profile;
   }
 
   update(id: number, updateProfileDto: UpdateProfileDto) {
