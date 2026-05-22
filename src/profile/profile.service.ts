@@ -62,6 +62,25 @@ export class ProfileService {
     return !!profile;
   }
 
+  // raw 데이터에서 friend Code를 가져오는 메소드
+  parseFriendCodeOrFail(html: string): string {
+
+    const match = html.match(/\b(\d{14})\b/);
+
+    if (this.isSessionExpired(html) || !match) {
+      throw new Error('세션이 만료되었거나, friend code를 찾을 수 없습니다.');
+    }
+
+    return match[1];
+  }
+
+  isSessionExpired(html: string): boolean {
+    return (
+      html.includes('エラーコード：200002') ||
+      html.includes('再度ログインしてください')
+    );
+  }
+
   update(id: number, updateProfileDto: UpdateProfileDto) {
     return `This action updates a #${id} profile`;
   }
