@@ -13,8 +13,9 @@ services:
       context: .
       target: builder
     env_file: .env
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    network_mode: host
+    environment:
+      DB_HOST: localhost
     command: npm run migration:run
     profiles:
       - migrate
