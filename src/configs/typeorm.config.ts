@@ -2,6 +2,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 
+dotenv.config();
 dotenv.config({ path: 'src/configs/env/.development.env' });
 
 /**
