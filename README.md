@@ -52,6 +52,46 @@ CORS_ORIGIN=http://localhost:3000
 
 <br>
 
+# Docker로 스테이징 환경 띄우기
+
+> 호스트에 PostgreSQL이 설치되어 있는 경우를 기준으로 합니다.
+
+### 사전 준비 (최초 1회)
+
+컨테이너에서 호스트 PostgreSQL로의 접속을 허용합니다.
+
+```bash
+# /etc/postgresql/16/main/postgresql.conf
+listen_addresses = '*'
+
+# /etc/postgresql/16/main/pg_hba.conf 마지막 줄에 추가
+host  all  all  172.17.0.0/16  md5
+```
+
+```bash
+sudo systemctl restart postgresql
+```
+
+### 실행
+
+```bash
+git clone <레포 주소> && cd maiDB_backend
+cp .env.example .env  # 실제 값으로 수정
+docker compose up -d --build
+docker compose exec app npm run migration:run
+```
+
+### 기타 명령어
+
+```bash
+docker compose ps            # 상태 확인
+docker compose logs app      # 로그 확인
+docker compose down          # 중지
+docker compose up -d --build # 코드 변경 후 재빌드
+```
+
+<br>
+
 # 마이그레이션 관련 스크립트
 
 본 프로젝트에선 TypeORM 마이그레이션을 사용하여 DB의 변경 내역을 관리합니다.
