@@ -7,3 +7,14 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  migrate:
+    build:
+      context: .
+      target: builder
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: npm run migration:run
+    profiles:
+      - migrate

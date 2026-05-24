@@ -80,13 +80,11 @@ sudo systemctl restart postgresql
 
 ### 실행
 
-마이그레이션은 컨테이너 이미지에 ts-node와 소스 파일이 포함되지 않으므로 호스트에서 실행합니다.
-
 ```bash
 git clone <레포 주소> && cd maiDB_backend
 cp .env.example .env  # 실제 값으로 수정
-npm i && npm run migration:run  # 호스트에서 마이그레이션 실행
 docker compose up -d --build
+docker compose --profile migrate run --rm migrate  # 마이그레이션
 ```
 
 ### 기타 명령어
