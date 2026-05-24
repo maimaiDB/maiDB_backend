@@ -5,3 +5,6 @@ coverage
 .idea
 .vscode
 *.log
+.env
+*.env
+src/configs/env/

@@ -56,13 +56,19 @@ CORS_ORIGIN=http://localhost:3000
 
 > 호스트에 PostgreSQL이 설치되어 있는 경우를 기준으로 합니다.
 
+> **`.env` 파일 역할 구분**
+>
+> - `src/configs/env/.development.env` : 로컬 개발 시 앱이 직접 읽는 파일
+> - 프로젝트 루트 `.env` : Docker Compose가 컨테이너에 환경변수를 주입하기 위한 파일 (앱이 직접 읽지 않음)
+
 ### 사전 준비 (최초 1회)
 
 컨테이너에서 호스트 PostgreSQL로의 접속을 허용합니다.
 
 ```bash
 # /etc/postgresql/16/main/postgresql.conf
-listen_addresses = '*'
+# Docker 브리지 인터페이스(172.17.0.1)만 추가로 허용
+listen_addresses = 'localhost,172.17.0.1'
 
 # /etc/postgresql/16/main/pg_hba.conf 마지막 줄에 추가
 host  all  all  172.17.0.0/16  md5
@@ -74,11 +80,13 @@ sudo systemctl restart postgresql
 
 ### 실행
 
+마이그레이션은 컨테이너 이미지에 ts-node와 소스 파일이 포함되지 않으므로 호스트에서 실행합니다.
+
 ```bash
 git clone <레포 주소> && cd maiDB_backend
 cp .env.example .env  # 실제 값으로 수정
+npm i && npm run migration:run  # 호스트에서 마이그레이션 실행
 docker compose up -d --build
-docker compose exec app npm run migration:run
 ```
 
 ### 기타 명령어
