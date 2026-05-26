@@ -20,6 +20,7 @@ export class ProfileController {
   // 프로필 동기화
   // 
   @Post(':region')
+  @HttpCode(202) // Profile 존재 여부와 관계없이 MQ에 정규화 메세지가 들어가니까 응답은 202 Accepted로 통일
   @UseGuards(JwtAccessGuard)
   async syncProfile(
     @Param() params: SyncProfileParamDto,
