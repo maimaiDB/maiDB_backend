@@ -15,7 +15,7 @@ class RawDataItemDto {
     size: number;
 }
 
-export class SyncProfileDto {
+export class RawDataDto {
     @ValidateNested()
     @Type(() => RawDataItemDto)
     home: RawDataItemDto;

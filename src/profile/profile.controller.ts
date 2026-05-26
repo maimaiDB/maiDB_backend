@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpCode } from '@nestjs/common';
 import { ProfileService } from './profile.service';
-import { CreateProfileDto } from './dto/create-profile.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+import { RawDataDto } from './dto/raw-data.dto';
 import { Region } from './enums/region.enum';
 import { GetProfileParamDto } from './dto/get-profile-param.dto';
 import { InjectQueue } from '@nestjs/bullmq';
@@ -13,7 +12,7 @@ import { SyncProfileParamDto } from './dto/sync-profile-param.dto';
 export class ProfileController {
   constructor(
     private readonly profileService: ProfileService,
-    @InjectQueue('test-queue')
+    @InjectQueue('raw-data-normalization')
     private readonly queue: Queue,
   ) { }
 
@@ -24,29 +23,20 @@ export class ProfileController {
   @UseGuards(JwtAccessGuard)
   async syncProfile(
     @Param() params: SyncProfileParamDto,
-    @Body() syncProfileDto: SyncProfileDto,
+    @Body() rawDataDto: RawDataDto,
     @Req() req: any,
   ) {
     const { region } = params;
 
     const start = performance.now();
-    const friendCode = this.profileService.parseFriendCodeOrFail(syncProfileDto?.userFriendCode?.html || '');
+    const friendCode = this.profileService.parseFriendCodeOrFail(rawDataDto.userFriendCode.html || '');
     const end = performance.now();
     console.log(`실행 시간: ${end - start} ms`);
-    console.log(friendCode);
 
-    const profile = await this.profileService.findProfileOrFail(region, friendCode);
+    const response = await this.profileService.enqueueProfileSync(region, friendCode, rawDataDto);
 
-    if (!profile) {
-      console.log("오마이깠!");
-    }
 
-    return profile;
-  }
-
-  @Get()
-  async queueTest() {
-    return await this.profileService.queueTest();
+    return response;
   }
 
   @Get(':region/:friendCode')
@@ -69,11 +59,6 @@ export class ProfileController {
   //     failedReason: job.failedReason,
   //   };
   // }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profileService.update(+id, updateProfileDto);
-  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

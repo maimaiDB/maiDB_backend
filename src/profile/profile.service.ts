@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProfileDto } from './dto/create-profile.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+import { RawDataDto } from './dto/raw-data.dto';
 import { Region } from './enums/region.enum';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
@@ -19,11 +18,8 @@ export class ProfileService {
     private readonly queue: Queue,
   ) { }
 
-  create(createProfileDto: CreateProfileDto) {
-    return 'This action adds a new profile';
-  }
-
-  async queueTest() {
+  // 정규화 및 프로필 upsert를 수행하기 위한 메세지를 메세지큐에 등록하는 메소드
+  async enqueueProfileSync(region: Region, friendCode: string, rawDataDto: RawDataDto) {
     const job = await this.queue.add(
       'test-job',
       { data: 'Hello, BullMQ!' },
