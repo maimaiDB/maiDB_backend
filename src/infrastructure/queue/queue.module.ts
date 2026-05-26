@@ -11,7 +11,7 @@ import { BullModule } from '@nestjs/bullmq';
             },
         }),
         BullModule.registerQueue({
-            name: 'test-queue',
+            name: 'raw-data-normalization',
         }),
     ],
     exports: [BullModule],

@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpCode } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { RawDataDto } from './dto/raw-data.dto';
-import { Region } from './enums/region.enum';
 import { GetProfileParamDto } from './dto/get-profile-param.dto';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';

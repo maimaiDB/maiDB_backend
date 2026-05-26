@@ -14,15 +14,19 @@ export class ProfileService {
   constructor(
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
-    @InjectQueue('test-queue')
+    @InjectQueue('raw-data-normalization')
     private readonly queue: Queue,
   ) { }
 
   // 정규화 및 프로필 upsert를 수행하기 위한 메세지를 메세지큐에 등록하는 메소드
   async enqueueProfileSync(region: Region, friendCode: string, rawDataDto: RawDataDto) {
     const job = await this.queue.add(
-      'test-job',
-      { data: 'Hello, BullMQ!' },
+      'raw-data-normalization',
+      {
+        region,
+        friendCode,
+        rawData: rawDataDto,
+      },
       {
         attempts: 3, // 최대 재시도 횟수
         backoff: {
