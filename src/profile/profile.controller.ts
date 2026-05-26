@@ -24,16 +24,24 @@ export class ProfileController {
   @UseGuards(JwtAccessGuard)
   async syncProfile(
     @Param() params: SyncProfileParamDto,
-    @Body() createProfileDto: CreateProfileDto,
+    @Body() syncProfileDto: SyncProfileDto,
     @Req() req: any,
   ) {
     const { region } = params;
 
-    if (!await this.profileService.isProfileExistByRegionAndUserId(region, req.user)) {
+    const start = performance.now();
+    const friendCode = this.profileService.parseFriendCodeOrFail(syncProfileDto?.userFriendCode?.html || '');
+    const end = performance.now();
+    console.log(`실행 시간: ${end - start} ms`);
+    console.log(friendCode);
+
+    const profile = await this.profileService.findProfileOrFail(region, friendCode);
+
+    if (!profile) {
       console.log("오마이깠!");
     }
 
-    return '';
+    return profile;
   }
 
   @Get()

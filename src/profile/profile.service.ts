@@ -64,8 +64,7 @@ export class ProfileService {
 
   // raw 데이터에서 friend Code를 가져오는 메소드
   parseFriendCodeOrFail(html: string): string {
-
-    const match = html.match(/\b(\d{14})\b/);
+    const match = html.match(/(\d{13})/);
 
     if (this.isSessionExpired(html) || !match) {
       throw new Error('세션이 만료되었거나, friend code를 찾을 수 없습니다.');
