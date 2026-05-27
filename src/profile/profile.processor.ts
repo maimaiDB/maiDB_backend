@@ -25,8 +25,8 @@ export class ProfileProcessor extends WorkerHost {
         const start = performance.now();
         const { friendCode, region, rawData } = job.data;
         // playerData는 rawData의 home에 위치함
-        const playerData = this.parsePlayerData(rawData.home.html);
-        playerData['friend_code'] = friendCode;
+        const playerData: PlayerData = this.parsePlayerData(rawData.home.html);
+        playerData.friendCode = friendCode;
         const end = performance.now();
         console.log(`실행 시간: ${end - start} ms`);
         console.log(playerData);
@@ -108,13 +108,13 @@ export class ProfileProcessor extends WorkerHost {
         return {
             name,
             rating: parseInt(currentRating || "0", 10),
-            trophy_text: trophyText,
-            trophy_type: trophyType,
-            icon_url: iconUrl,
-            course_rank: courseRank,
-            class_rank: classRank,
-            star_count: starMatch ? parseInt(starMatch[1], 10) : 0,
-            friend_code: null,
+            trophyText,
+            trophyType,
+            iconUrl,
+            courseRank,
+            classRank,
+            starCount: starMatch ? parseInt(starMatch[1], 10) : 0,
+            friendCode: null,
         };
     }
 
