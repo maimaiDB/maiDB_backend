@@ -1,6 +1,6 @@
 export type TrophyType = 'Normal' | 'Bronze' | 'Silver' | 'Gold' | 'Rainbow';
 
-export interface PlayerData {
+export interface ProfileData {
     name: string;
     rating: number;
     trophyText: string;
@@ -9,5 +9,5 @@ export interface PlayerData {
     courseRank: string;
     classRank: string;
     starCount: number;
-    friendCode: string | null;
+    friendCode: string;
 }

@@ -1,17 +1,14 @@
 // profile.processor.ts
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Profile } from './entities/profile.entity';
-import { TrophyType, PlayerData } from './types/profile-parser.type';
+import { TrophyType, ProfileData } from './types/profile-parser.type';
 import { load } from 'cheerio';
+import { ProfileService } from './profile.service';
 
 @Processor('raw-data-normalization')
 export class ProfileProcessor extends WorkerHost {
     constructor(
-        @InjectRepository(Profile)
-        private readonly profileRepository: Repository<Profile>,
+        private readonly profileService: ProfileService,
     ) {
         super();
     }
@@ -23,14 +20,16 @@ export class ProfileProcessor extends WorkerHost {
         // console.log(job)
 
         const start = performance.now();
-        const { friendCode, region, rawData } = job.data;
-        // playerData는 rawData의 home에 위치함
-        const playerData: PlayerData = this.parsePlayerData(rawData.home.html);
-        playerData.friendCode = friendCode;
+            const { friendCode, region, rawData, user } = job.data;
+            // profileData는 rawData의 home에 위치함
+            const profileData: ProfileData = this.parsePlayerData(rawData.home.html, friendCode);
+            profileData.friendCode = friendCode;
+            console.log(profileData);
+            // console.log(user);
+
+            await this.profileService.upsertProfile(region, profileData, user);
         const end = performance.now();
         console.log(`실행 시간: ${end - start} ms`);
-        console.log(playerData);
-        // console.log(rawData);
 
         // 각 단계마다 진행률을 명시적으로 업데이트
         await job.updateProgress(33);
@@ -50,7 +49,7 @@ export class ProfileProcessor extends WorkerHost {
             .replace(/\.[^.]+$/, '');
     }
 
-    private parsePlayerData(html: string): PlayerData {
+    private parsePlayerData(html: string, friendCode: string): ProfileData {
         // Cheerio를 사용하여 HTML을 파싱
         const $ = load(html);
 
@@ -114,7 +113,7 @@ export class ProfileProcessor extends WorkerHost {
             courseRank,
             classRank,
             starCount: starMatch ? parseInt(starMatch[1], 10) : 0,
-            friendCode: null,
+            friendCode,
         };
     }
 

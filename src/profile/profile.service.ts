@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { User } from 'src/user/entities/user.entity';
+import { ProfileData } from './types/profile-parser.type';
 
 @Injectable()
 export class ProfileService {
@@ -19,13 +20,14 @@ export class ProfileService {
   ) { }
 
   // 정규화 및 프로필 upsert를 수행하기 위한 메세지를 메세지큐에 등록하는 메소드
-  async enqueueProfileSync(region: Region, friendCode: string, rawDataDto: RawDataDto) {
+  async enqueueProfileSync(region: Region, friendCode: string, rawDataDto: RawDataDto, user: User) {
     const job = await this.queue.add(
       'raw-data-normalization',
       {
         region,
         friendCode,
         rawData: rawDataDto,
+        user
       },
       {
         attempts: 3, // 최대 재시도 횟수
@@ -41,6 +43,40 @@ export class ProfileService {
     return {
       messageId: job.id
     };
+  }
+
+  /**
+   * CHECKLIST 
+   * [ ]TODO: maxRating 업데이트 로직 구현 (현재는 upsert 시 maxRating이 0으로 고정되어 있음)
+     - maxRating이 0인 경우에는 현재 rating으로 업데이트, 0이 아닌 경우에는 기존 maxRating과 현재 rating 중 더 높은 값으로 업데이트
+   * */
+
+  async upsertProfile(region: Region, profileData: ProfileData, user: User) {
+    const profile = new Profile()
+    profile.friendCode = profileData.friendCode;
+    profile.region = region;
+    profile.name = profileData.name;
+    profile.currentRating = profileData.rating;
+    profile.trophyText = profileData.trophyText;
+    profile.trophyType = profileData.trophyType;
+    profile.iconUrl = profileData.iconUrl;
+    profile.courseRank = profileData.courseRank;
+    profile.classRank = profileData.classRank;
+    profile.starCount = profileData.starCount;
+    profile.user = user;
+
+    profile.playCount = 0;
+    profile.maxRating = 0;
+
+    console.log(profile);
+
+    await this.profileRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Profile)
+      .values(profile)
+      .orUpdate(['name', 'maxRating', 'currentRating', 'playCount', 'trophyText', 'trophyType', 'iconUrl', 'courseRank', 'classRank', 'starCount', 'userId'], ['friendCode', 'region'])
+      .execute();
   }
 
   async findProfileOrFail(region: Region, friendCode: string) {
@@ -78,10 +114,6 @@ export class ProfileService {
       html.includes('エラーコード：200002') ||
       html.includes('再度ログインしてください')
     );
-  }
-
-  update(id: number, updateProfileDto: UpdateProfileDto) {
-    return `This action updates a #${id} profile`;
   }
 
   remove(id: number) {

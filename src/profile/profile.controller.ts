@@ -32,7 +32,7 @@ export class ProfileController {
     const end = performance.now();
     console.log(`실행 시간: ${end - start} ms`);
 
-    const response = await this.profileService.enqueueProfileSync(region, friendCode, rawDataDto);
+    const response = await this.profileService.enqueueProfileSync(region, friendCode, rawDataDto, req.user);
 
 
     return response;
