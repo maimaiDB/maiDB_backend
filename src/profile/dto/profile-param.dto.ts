@@ -2,7 +2,7 @@
 import { IsEnum, IsString } from 'class-validator';
 import { Region } from '../enums/region.enum';
 
-export class GetProfileParamDto {
+export class ProfileParamDto {
   @IsEnum(Region)
   region: Region;
 
