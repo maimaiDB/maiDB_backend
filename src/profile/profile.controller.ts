@@ -38,6 +38,21 @@ export class ProfileController {
     return response;
   }
 
+  @Get('job/:id')
+  async getJobStatus(@Param('id') id: string) {
+    const job = await this.profileService.getJobStatus(id);
+
+    if (!job) {
+      return { status: 'not_found' };
+    }
+
+    return {
+      state: await job.getState(),
+      progress: job.progress,
+      failedReason: job.failedReason,
+    };
+  }
+
   @Get(':region/:friendCode')
   async getProfile(@Param() params: ProfileParamDto) {
     const { region, friendCode } = params;

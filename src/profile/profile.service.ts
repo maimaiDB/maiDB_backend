@@ -98,6 +98,10 @@ export class ProfileService {
     return !!profile;
   }
 
+  async getJobStatus(id: string) {
+    return await this.queue.getJob(id);
+  }
+
   // raw 데이터에서 friend Code를 가져오는 메소드
   parseFriendCodeOrFail(html: string): string {
     const match = html.match(/(\d{13})/);
