@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  HttpCode,
+} from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { RawDataDto } from './dto/raw-data.dto';
 import { ProfileParamDto } from './dto/profile-param.dto';
@@ -8,15 +19,14 @@ import { RolesGuard } from 'src/user/guards/roles.guard';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { UserRole } from 'src/user/enums/user-role.enum';
 import { ProfileOwnerGuard } from './guards/profile-owner.guard';
+import { OwnerGuard } from './guards/owner.guard';
 
 @Controller('profiles')
 export class ProfileController {
-  constructor(
-    private readonly profileService: ProfileService,
-  ) { }
+  constructor(private readonly profileService: ProfileService) {}
 
   // 프로필 동기화
-  // 
+  //
   @Post(':region')
   @HttpCode(202) // Profile 존재 여부와 관계없이 MQ에 정규화 메세지가 들어가니까 응답은 202 Accepted로 통일
   @UseGuards(JwtAccessGuard)
@@ -28,17 +38,24 @@ export class ProfileController {
     const { region } = params;
 
     const start = performance.now();
-    const friendCode = this.profileService.parseFriendCodeOrFail(rawDataDto.userFriendCode.html || '');
+    const friendCode = this.profileService.parseFriendCodeOrFail(
+      rawDataDto.userFriendCode.html || '',
+    );
     const end = performance.now();
     console.log(`실행 시간: ${end - start} ms`);
 
-    const response = await this.profileService.enqueueProfileSync(region, friendCode, rawDataDto, req.user);
-
+    const response = await this.profileService.enqueueProfileSync(
+      region,
+      friendCode,
+      rawDataDto,
+      req.user,
+    );
 
     return response;
   }
 
   @Get('job/:id')
+  @UseGuards(JwtAccessGuard, OwnerGuard)
   async getJobStatus(@Param('id') id: string) {
     const job = await this.profileService.getJobStatus(id);
 
