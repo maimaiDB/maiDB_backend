@@ -44,22 +44,6 @@ export class ProfileController {
     return this.profileService.findProfileOrFail(region, friendCode);
   }
 
-  // @Get('job/:id')
-  // async getJobStatus(@Param('id') id: string) {
-  //   const job = await this.queue.getJob(id);
-
-  //   if (!job) {
-  //     return { status: 'not_found' };
-  //   }
-
-  //   return {
-  //     state: await job.getState(),
-  //     progress: job.progress,
-  //     failedReason: job.failedReason,
-  //   };
-  // }
-
-
   /**
    * CHECKLIST
    * [ ]TODO: profile을 지울 때 PLAY_RECORD 테이블까지 지워지게 해야함
@@ -68,9 +52,8 @@ export class ProfileController {
   @Delete(':region/:friendCode')
   @UseGuards(JwtAccessGuard, RolesGuard, ProfileOwnerGuard)
   @Roles(UserRole.ADMIN, UserRole.USER)
-  remove(@Param() params: ProfileParamDto) {
+  async removeProfile(@Param() params: ProfileParamDto) {
     const { region, friendCode } = params;
-    console.log(`하이!!!`);
-    // return this.profileService.remove(+id);
+    return await this.profileService.removeProfile(region, friendCode);
   }
 }

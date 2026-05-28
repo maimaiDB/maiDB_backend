@@ -116,7 +116,13 @@ export class ProfileService {
     );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} profile`;
+  async removeProfile(region: Region, friendCode: string) {
+    const response = await this.profileRepository.delete({ region, friendCode });
+
+    if (response.affected === 0) {
+      throw ProfileNotFoundedException();
+    }
+
+    return response;
   }
 }
