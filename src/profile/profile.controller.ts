@@ -1,18 +1,18 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpCode } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { RawDataDto } from './dto/raw-data.dto';
-import { GetProfileParamDto } from './dto/get-profile-param.dto';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Queue } from 'bullmq';
+import { ProfileParamDto } from './dto/profile-param.dto';
 import { JwtAccessGuard } from 'src/auth/guards/jwt-access.guard';
 import { SyncProfileParamDto } from './dto/sync-profile-param.dto';
+import { RolesGuard } from 'src/user/guards/roles.guard';
+import { Roles } from 'src/user/decorators/roles.decorator';
+import { UserRole } from 'src/user/enums/user-role.enum';
+import { ProfileOwnerGuard } from './guards/profile-owner.guard';
 
 @Controller('profiles')
 export class ProfileController {
   constructor(
     private readonly profileService: ProfileService,
-    @InjectQueue('raw-data-normalization')
-    private readonly queue: Queue,
   ) { }
 
   // 프로필 동기화
@@ -39,7 +39,7 @@ export class ProfileController {
   }
 
   @Get(':region/:friendCode')
-  async getProfile(@Param() params: GetProfileParamDto) {
+  async getProfile(@Param() params: ProfileParamDto) {
     const { region, friendCode } = params;
     return this.profileService.findProfileOrFail(region, friendCode);
   }
@@ -59,8 +59,18 @@ export class ProfileController {
   //   };
   // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.profileService.remove(+id);
+
+  /**
+   * CHECKLIST
+   * [ ]TODO: profile을 지울 때 PLAY_RECORD 테이블까지 지워지게 해야함
+   *  */
+
+  @Delete(':region/:friendCode')
+  @UseGuards(JwtAccessGuard, RolesGuard, ProfileOwnerGuard)
+  @Roles(UserRole.ADMIN, UserRole.USER)
+  remove(@Param() params: ProfileParamDto) {
+    const { region, friendCode } = params;
+    console.log(`하이!!!`);
+    // return this.profileService.remove(+id);
   }
 }
