@@ -19,11 +19,11 @@ import { RolesGuard } from 'src/user/guards/roles.guard';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { UserRole } from 'src/user/enums/user-role.enum';
 import { ProfileOwnerGuard } from './guards/profile-owner.guard';
-import { OwnerGuard } from './guards/owner.guard';
+import { JobOwnerGuard } from './guards/job-owner.guard';
 
 @Controller('profiles')
 export class ProfileController {
-  constructor(private readonly profileService: ProfileService) {}
+  constructor(private readonly profileService: ProfileService) { }
 
   // 프로필 동기화
   //
@@ -55,7 +55,7 @@ export class ProfileController {
   }
 
   @Get('job/:id')
-  @UseGuards(JwtAccessGuard, OwnerGuard)
+  @UseGuards(JwtAccessGuard, JobOwnerGuard)
   async getJobStatus(@Param('id') id: string) {
     const job = await this.profileService.getJobStatus(id);
 

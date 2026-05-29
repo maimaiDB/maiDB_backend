@@ -7,16 +7,12 @@ import { UserRole } from 'src/user/enums/user-role.enum';
 import { ProfileService } from '../profile.service';
 
 @Injectable()
-export class OwnerGuard implements CanActivate {
-    constructor(private readonly profileService: ProfileService) {}
+export class JobOwnerGuard implements CanActivate {
+    constructor(private readonly profileService: ProfileService) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
         const user = request.user;
-
-        if (!user) {
-            throw UserNotFoundedException();
-        }
 
         if (user.role === UserRole.ADMIN) {
             return true;
