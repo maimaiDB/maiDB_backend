@@ -18,10 +18,6 @@ export class ProfileOwnerGuard implements CanActivate {
         // JWT Guard를 통과한 이후에 사용되므로, request.user가 존재한다고 가정
         const user = request.user;
 
-        if (!user) {
-            throw UserNotFoundedException();
-        }
-
         const { friendCode, region } = request.params;
 
         // region의 형식이 잘못됐다면 에러 
