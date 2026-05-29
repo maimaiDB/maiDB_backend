@@ -14,10 +14,6 @@ export class JobOwnerGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const user = request.user;
 
-        if (user.role === UserRole.ADMIN) {
-            return true;
-        }
-
         const { id } = request.params;
         const job = await this.profileService.getJobStatus(id);
 
@@ -25,10 +21,11 @@ export class JobOwnerGuard implements CanActivate {
             return true; // job not found는 컨트롤러에서 처리
         }
 
-        if (job.data.user.id !== user.id) {
-            throw AccessDeniedException();
+        // job의 userId가 요청을 보낸 사용자(user.id)와 일치하는지, 혹은 요청을 보낸 사용자가 ADMIN인지 확인하여 접근 허가
+        if (job.data.user.id === user.id || user.role === UserRole.ADMIN) {
+            return true;
         }
 
-        return true;
+        throw AccessDeniedException();
     }
 }
