@@ -31,6 +31,7 @@ import { UserVisibilityGuard } from './guards/user-visibility.guard';
  * [x] TODO: 전달받는 데이터 유효성 검증 - class-validator를 사용하여 DTO 클래스에 유효성 검사 데코레이터 추가
  * [ ] TODO: response 및 에러 형식 통일 - API 응답 형식을 일관되게 유지하기 위해 공통 응답 구조 정의
  * [x] TODO: response할 데이터의 정리를 service가 아닌 controller에서 하도록 변경
+ * [ ] TODO: delete시 PROFILE 및 CUSTOM_LIST, REFRESH_TOKEN까지 지워지게 해야함
  */
 
 @Controller('users')

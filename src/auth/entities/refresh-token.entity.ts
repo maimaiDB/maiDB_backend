@@ -20,11 +20,7 @@ export class RefreshToken extends BaseEntity {
     @CreateDateColumn()
     createdAt: Date;
 
-    @ManyToOne(
-        () => User,
-        user => user.refreshTokens,
-        { nullable: false, onDelete: 'CASCADE' }
-    )
+    @ManyToOne(() => User, user => user.refreshTokens, { nullable: false, onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
-    userId: number;
+    user: User;
 }

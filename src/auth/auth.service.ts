@@ -79,7 +79,6 @@ export class AuthService {
     const payload = {
       email: user.email,
       userId: user.id,
-      nickname: user.nickname,
     };
 
     return await this.jwtService.signAsync(payload);
@@ -89,7 +88,6 @@ export class AuthService {
     const payload = {
       email: user.email,
       userId: user.id,
-      nickname: user.nickname,
     };
 
     return await this.jwtService.signAsync(payload, {
@@ -105,7 +103,7 @@ export class AuthService {
   async setRefreshToken(user: User, refreshToken: string) {
     const newRefreshToken = await this.refreshTokenRepository.create({
       token: refreshToken,
-      userId: user.id,
+      user: user,
       expiresAt: new Date(
         Date.now() +
         parseInt(
