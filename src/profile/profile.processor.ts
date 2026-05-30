@@ -21,11 +21,9 @@ export class ProfileProcessor extends WorkerHost {
 
         const start = performance.now();
             const { friendCode, region, rawData, user } = job.data;
-            // profileData는 rawData의 home에 위치함
-            const profileData: ProfileData = this.parsePlayerData(rawData.home.html, friendCode);
+
+            const profileData: ProfileData = this.parseProfileData(rawData.home.html, friendCode);
             profileData.friendCode = friendCode;
-            console.log(profileData);
-            // console.log(user);
 
             await this.profileService.upsertProfile(region, profileData, user);
         const end = performance.now();
@@ -49,7 +47,10 @@ export class ProfileProcessor extends WorkerHost {
             .replace(/\.[^.]+$/, '');
     }
 
-    private parsePlayerData(html: string, friendCode: string): ProfileData {
+
+    // profileData를 파싱해오는 메소드
+    // profileData는 rawData.home.html에 위치함
+    private parseProfileData(html: string, friendCode: string): ProfileData {
         // Cheerio를 사용하여 HTML을 파싱
         const $ = load(html);
 
