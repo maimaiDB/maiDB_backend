@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 import { json } from 'body-parser';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -27,6 +28,17 @@ async function bootstrap() {
 
   // 제한되어있던 body의 크기를 늘려줌 
   app.use(json({ limit: '50mb' }));
+
+  // swagger 설정
+  const config = new DocumentBuilder()
+    .setTitle('maiDB API 문서')
+    .setDescription('maiDB API 명세서입니다.')
+    .setVersion('1.0')
+    .addBearerAuth() // JWT 인증 추가
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api-docs', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
 }
