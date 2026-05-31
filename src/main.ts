@@ -34,7 +34,16 @@ async function bootstrap() {
     .setTitle('maiDB API 문서')
     .setDescription('maiDB API 명세서입니다.')
     .setVersion('1.0')
-    .addBearerAuth() // JWT 인증 추가
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'access-token',
+    ) // JWT 인증 추가
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
