@@ -1,15 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpCode, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Delete, Res, HttpCode, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { SignUpDto } from './dto/sign-up.dto';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auths')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @Post('/signup')
+  @ApiOperation({ summary: '회원 가입' })
+  @ApiResponse({ status: 201, description: '회원 가입' })
+  @ApiResponse({ status: 400, description: '유효성 검증 실패' })
+  @ApiResponse({ status: 409, description: '이메일 중복' })
   async signUp(@Body() signUpDto: SignUpDto) {
     const savedUser = await this.authService.signUp(signUpDto);
 
@@ -28,6 +33,10 @@ export class AuthController {
    * [ ] TODO: 해당 유저의 만료되지 않은 refresh token이 존재하는 경우, 새로운 refresh token을 발급하기 전에 기존 refresh token을 만료시키거나 삭제하는 로직 구현 (refresh token의 유효성을 보장하기 위해) 
    */
   @Post('/login')
+  @ApiOperation({ summary: '로그인' })
+  @ApiResponse({ status: 200, description: '로그인 성공' })
+  @ApiResponse({ status: 400, description: '유효성 검증 실패' })
+  @ApiResponse({ status: 401, description: '이메일 또는 비밀번호 불일치' })
   @HttpCode(200) // 로그인 성공 시 200 OK 상태 코드 반환
   async login(
     @Body() loginDto: LoginDto,
@@ -63,6 +72,10 @@ export class AuthController {
 
   // [x] TODO: jwt-refresh guard를 사용하도록 변경. 이 guard는 refresh token의 유효성을 검사하여 인증된 사용자만 access token을 재발급받을 수 있도록 함
   @Post('/refresh')
+  @ApiOperation({ summary: 'Access 토큰 재발급' })
+  @ApiResponse({ status: 200, description: '토큰 재발급 성공' })
+  @ApiResponse({ status: 400, description: '유효성 검증 실패' })
+  @ApiResponse({ status: 401, description: 'Refresh 토큰이 없거나 만료됨' })
   @UseGuards(JwtRefreshGuard)
   async refreshAccessToken(
     @Req() req: any,
@@ -82,7 +95,11 @@ export class AuthController {
     }
   }
 
-  @Post('/logout')
+  @Delete('/logout')
+  @ApiOperation({ summary: '로그아웃' })
+  @ApiResponse({ status: 204, description: '로그아웃 성공' })
+  @ApiResponse({ status: 400, description: '유효성 검증 실패' })
+  @ApiResponse({ status: 401, description: 'Refresh 토큰이 없거나 만료됨' })
   // 로그아웃 시 refresh token의 유효성을 검사하여 인증된 사용자만 로그아웃할 수 있도록 함
   @UseGuards(JwtRefreshGuard)
   async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
