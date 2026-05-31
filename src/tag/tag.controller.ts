@@ -7,12 +7,18 @@ import { Roles } from 'src/user/decorators/roles.decorator';
 import { RolesGuard } from 'src/user/guards/roles.guard';
 import { UserRole } from 'src/user/enums/user-role.enum';
 import { TagNameAlreadyExistsException } from 'src/common/exception/service.exception';
+import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @Controller('tags')
 export class TagController {
   constructor(private readonly tagService: TagService) { }
 
   @Post()
+  @ApiOperation({ summary: '태그 생성 (관리자 전용)' })
+  @ApiResponse({ status: 201, description: '태그 생성 성공' })
+  @ApiResponse({ status: 401, description: 'Access 토큰이 없거나 만료됨' })
+  @ApiResponse({ status: 403, description: '관리자 권한이 없음' })
+  @ApiResponse({ status: 409, description: '태그명 중복' })
   @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async createTag(@Body() createTagDto: CreateTagDto) {
@@ -24,6 +30,10 @@ export class TagController {
   }
 
   @Get()
+  @ApiOperation({ summary: '전체 태그 조회' })
+  @ApiResponse({ status: 200, description: '전체 태그 조회 성공' })
+  @ApiResponse({ status: 401, description: 'Access 토큰이 없거나 만료됨' })
+  @ApiResponse({ status: 403, description: '관리자 권한이 없음' })
   @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   getTags() {
@@ -31,7 +41,16 @@ export class TagController {
   }
 
   @Patch(':id')
-  @Get()
+  @ApiOperation({ summary: '태그 수정' })
+  @ApiResponse({ status: 200, description: '태그 수정 성공' })
+  @ApiResponse({ status: 401, description: 'Access 토큰이 없거나 만료됨' })
+  @ApiResponse({ status: 403, description: '관리자 권한이 없음' })
+  @ApiResponse({ status: 404, description: '해당 id의 태그가 발견되지 않음' })
+  @ApiParam({
+    name: 'id',
+    description: '태그 ID',
+    type: Number
+  })
   @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   update(
@@ -42,7 +61,16 @@ export class TagController {
   }
 
   @Delete(':id')
-  @Get()
+  @ApiOperation({ summary: '태그 삭제' })
+  @ApiResponse({ status: 204, description: '태그 삭제 성공' })
+  @ApiResponse({ status: 401, description: 'Access 토큰이 없거나 만료됨' })
+  @ApiResponse({ status: 403, description: '관리자 권한이 없음' })
+  @ApiResponse({ status: 404, description: '해당 id의 태그가 발견되지 않음' })
+  @ApiParam({
+    name: 'id',
+    description: '태그 ID',
+    type: Number
+  })
   @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   remove(@Param('id', ParseIntPipe) id: number) {
