@@ -30,7 +30,7 @@ export class TagController {
   }
 
   @Get()
-  @ApiOperation({ summary: '전체 태그 조회' })
+  @ApiOperation({ summary: '전체 태그 조회 (관리자 전용)' })
   @ApiResponse({ status: 200, description: '전체 태그 조회 성공' })
   @ApiResponse({ status: 401, description: 'Access 토큰이 없거나 만료됨' })
   @ApiResponse({ status: 403, description: '관리자 권한이 없음' })
@@ -41,11 +41,12 @@ export class TagController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: '태그 수정' })
+  @ApiOperation({ summary: '태그 수정 (관리자 전용)' })
   @ApiResponse({ status: 200, description: '태그 수정 성공' })
   @ApiResponse({ status: 401, description: 'Access 토큰이 없거나 만료됨' })
   @ApiResponse({ status: 403, description: '관리자 권한이 없음' })
   @ApiResponse({ status: 404, description: '해당 id의 태그가 발견되지 않음' })
+  @ApiResponse({ status: 409, description: '태그명 중복' })
   @ApiParam({
     name: 'id',
     description: '태그 ID',
@@ -61,7 +62,7 @@ export class TagController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: '태그 삭제' })
+  @ApiOperation({ summary: '태그 삭제 (관리자 전용)' })
   @ApiResponse({ status: 204, description: '태그 삭제 성공' })
   @ApiResponse({ status: 401, description: 'Access 토큰이 없거나 만료됨' })
   @ApiResponse({ status: 403, description: '관리자 권한이 없음' })

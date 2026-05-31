@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreateTagDto {
     @ApiProperty({
-        description: '노래 태그',
+        description: '태그명',
         example: '체력',
     })
     @IsNotEmpty()
