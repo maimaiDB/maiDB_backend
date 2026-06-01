@@ -64,7 +64,7 @@ export class UserController {
   @ApiResponse({ status: 200, description: '성공적으로 사용자 정보를 조회' })
   @ApiResponse({ status: 400, description: '유효성 검증 실패' })
   @ApiResponse({ status: 401, description: 'Access 토큰이 없거나 만료됨' })
-  @ApiResponse({ status: 403, description: '관리자 권한이 없거나 접근이 허용된 유저가 아님' })
+  @ApiResponse({ status: 403, description: '관리자 권한이 없거나 유저 본인이 아님' })
   @ApiResponse({ status: 404, description: '해당 id의 유저가 발견되지 않음' })
   @ApiParam({
     name: 'id',
