@@ -10,6 +10,7 @@ import { SongModule } from './song/song.module';
 import { TagModule } from './tag/tag.module';
 import { ProfileModule } from './profile/profile.module';
 import { QueueModule } from './infrastructure/queue/queue.module';
+import { PatternModule } from './pattern/pattern.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { QueueModule } from './infrastructure/queue/queue.module';
     TagModule,
     ProfileModule,
     QueueModule,
+    PatternModule,
   ],
   controllers: [AppController],
   providers: [AppService],
