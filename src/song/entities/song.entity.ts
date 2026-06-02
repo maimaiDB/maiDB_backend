@@ -1,6 +1,7 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Version } from "../enums/version.enum";
 import { Genre } from "../enums/genre.enum";
+import { Pattern } from "src/pattern/entities/pattern.entity";
 
 @Entity('songs')
 export class Song extends BaseEntity {
@@ -38,4 +39,7 @@ export class Song extends BaseEntity {
         enum: Version, // Version enum 사용
     })
     version: Version;
+
+    @OneToMany(() => Pattern, profile => profile.song)
+    profiles?: Pattern[];
 }
