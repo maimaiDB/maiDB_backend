@@ -5,7 +5,7 @@
     "width": 2000,
     "height": 2000,
     "scrollTop": -186,
-    "scrollLeft": -462,
+    "scrollLeft": -800,
     "zoomLevel": 0.82,
     "show": 431,
     "database": 4,
@@ -811,7 +811,7 @@
         "comment": "표기 레벨",
         "dataType": "VARCHAR",
         "default": "",
-        "options": 0,
+        "options": 8,
         "ui": {
           "keys": 0,
           "widthName": 60,
@@ -820,7 +820,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1779960698616,
+          "updateAt": 1780491200324,
           "createAt": 1772480481632
         }
       },
