@@ -16,11 +16,11 @@ export class Pattern extends BaseEntity {
     level: string;
 
     // 내부 상수 레벨
-    @Column({ nullable: false })
-    internalLevel
+    @Column({ nullable: true })
+    internalLevel: number;
 
     // DX 여부
-    @Column({ nullable: true })
+    @Column({ nullable: false })
     isDx: boolean;
 
     // 채보 제작자
