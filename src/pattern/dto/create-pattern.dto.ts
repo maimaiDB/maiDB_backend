@@ -14,9 +14,9 @@ export class CreatePatternDto {
     @IsNumber({}, { message: '내부 상수는 숫자여야 합니다.' })
     internalLevel?: number;
 
-    @IsOptional()
-    @IsBoolean({ message: '체감 난이도는 bool이어야 합니다.' })
-    isDx?: boolean;
+    @IsNotEmpty()
+    @IsBoolean({ message: 'DX여부는 bool이어야 합니다.' })
+    isDx: boolean;
 
     @IsOptional()
     @IsString({ message: '채보제작자는 문자열이어야 합니다.' })
