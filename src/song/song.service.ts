@@ -25,6 +25,10 @@ export class SongService {
     return !!song;
   }
 
+  async findSongById(id: number) {
+    return await this.songRepository.findOne({ where: { id } });
+  }
+
   async findSongByTitleOrFail(title: string) {
     const song = await this.songRepository.findOne({ where: { title } });
 

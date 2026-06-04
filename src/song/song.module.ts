@@ -11,5 +11,6 @@ import { AuthModule } from 'src/auth/auth.module';
   ],
   controllers: [SongController],
   providers: [SongService],
+  exports: [SongService]
 })
 export class SongModule { }
