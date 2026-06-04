@@ -23,13 +23,12 @@ export class PatternController {
     @Param('songId', ParseIntPipe) songId: number,
     @Body() patternData: CreatePatternDto,
   ) {
-    // songId를 기반으로 Song 엔티티 조회
+    // 먼저 songId의 노래가 존재하는지 확인
     const song = await this.songService.findSongById(songId);
     if (!song) {
       throw SongNotFoundedException();
     }
 
-    // Pattern 엔티티 생성
     const pattern = await this.patternService.createPattern(patternData, song);
 
     return pattern;
