@@ -1,4 +1,4 @@
-import { Difficulty } from "src/profile/enums/difficulty.enum";
+import { Difficulty } from "src/pattern/enums/difficulty.enum";
 import { Song } from "src/song/entities/song.entity";
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -25,15 +25,15 @@ export class Pattern extends BaseEntity {
 
     // 채보 제작자
     @Column({ nullable: true })
-    chartDesigner: number;
+    chartDesigner: string;
 
     // 채보 추천도
     @Column({ nullable: true })
-    recommendationScore: number;
+    recommendationScore: string;
 
     // 체감 난이도
     @Column({ nullable: true })
-    perceivedDifficulty: number;
+    perceivedDifficulty: string;
 
     @ManyToOne(() => Song, song => song.profiles)
     @JoinColumn({ name: 'songId' })
