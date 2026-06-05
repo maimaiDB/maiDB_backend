@@ -39,9 +39,9 @@ export class PatternController {
     return this.patternService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.patternService.findOne(+id);
+  @Get(':patternId')
+  async getPattern(@Param('patternId', ParseIntPipe) id: number) {
+    return await this.patternService.findPatternByIdOrFail(id);
   }
 
   @Patch(':id')
