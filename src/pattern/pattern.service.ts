@@ -55,8 +55,10 @@ export class PatternService {
     return pattern;
   }
 
-  findAll() {
-    return `This action returns all pattern`;
+  async findPatterns() {
+    return await this.patternRepository.find({
+      relations: ['song'], // 패턴과 연관된 곡 정보도 함께 조회
+    });
   }
 
 

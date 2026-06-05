@@ -35,8 +35,8 @@ export class PatternController {
   }
 
   @Get()
-  findAll() {
-    return this.patternService.findAll();
+  async getPatterns() {
+    return await this.patternService.findPatterns();
   }
 
   @Get(':patternId')
