@@ -62,8 +62,26 @@ export class PatternService {
   }
 
 
-  update(id: number, updatePatternDto: UpdatePatternDto) {
-    return `This action updates a #${id} pattern`;
+  async updatePattern(patternId: number, updatePatternDto: UpdatePatternDto) {
+    const existingPattern = await this.patternRepository.findOne({
+      where: { id: patternId },
+      relations: ['song'], // song 관계를 명시적으로 로드
+    });
+
+
+    if (!existingPattern) {
+      throw PatternNotFoundedException();
+    }
+
+    // 기존 패턴에 업데이트 데이터를 병합
+    const updatedPattern = this.patternRepository.merge(existingPattern, updatePatternDto);
+
+    // 중복 확인
+    if (await this.findPatternByUniqueValue(updatedPattern.song, updatedPattern.isDx, updatedPattern.difficulty)) {
+      throw PatternAlreadyExistsException();
+    }
+
+    return await this.patternRepository.save(updatedPattern);
   }
 
   remove(id: number) {

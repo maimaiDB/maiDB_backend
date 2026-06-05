@@ -44,9 +44,11 @@ export class PatternController {
     return await this.patternService.findPatternByIdOrFail(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePatternDto: UpdatePatternDto) {
-    return this.patternService.update(+id, updatePatternDto);
+  @Patch(':patternId')
+  @UseGuards(JwtRefreshGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async updatePattern(@Param('patternId', ParseIntPipe) patternId: number, @Body() updatePatternDto: UpdatePatternDto) {
+    return this.patternService.updatePattern(patternId, updatePatternDto);
   }
 
   @Delete(':id')
