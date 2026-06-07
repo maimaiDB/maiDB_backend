@@ -51,8 +51,10 @@ export class PatternController {
     return this.patternService.updatePattern(patternId, updatePatternDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.patternService.remove(+id);
+  @Delete(':patternId')
+  @UseGuards(JwtRefreshGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async removePattern(@Param('patternId', ParseIntPipe) patternId: number) {
+    return await this.patternService.removePattern(patternId);
   }
 }

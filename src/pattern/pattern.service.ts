@@ -84,7 +84,13 @@ export class PatternService {
     return await this.patternRepository.save(updatedPattern);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pattern`;
+  async removePattern(patternId: number) {
+    const response = await this.patternRepository.delete({ id: patternId });
+
+    if (response.affected === 0) {
+      throw PatternNotFoundedException();
+    }
+
+    return response;
   }
 }
