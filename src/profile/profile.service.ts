@@ -9,20 +9,21 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { User } from 'src/user/entities/user.entity';
 import { ProfileData } from './types/profile-parser.type';
+import { QUEUE_NAMES } from 'src/infrastructure/queue/queue.constants';
 
 @Injectable()
 export class ProfileService {
   constructor(
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
-    @InjectQueue('raw-data-normalization')
+    @InjectQueue(QUEUE_NAMES.PROFILE_SYNC)
     private readonly queue: Queue,
   ) { }
 
   // 정규화 및 프로필 upsert를 수행하기 위한 메세지를 메세지큐에 등록하는 메소드
   async enqueueProfileSync(region: Region, friendCode: string, rawDataDto: RawDataDto, user: User) {
     const job = await this.queue.add(
-      'raw-data-normalization',
+      QUEUE_NAMES.PROFILE_SYNC,
       {
         region,
         friendCode,

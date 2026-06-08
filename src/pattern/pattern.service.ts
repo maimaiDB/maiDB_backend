@@ -7,12 +7,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Song } from 'src/song/entities/song.entity';
 import { Difficulty } from './enums/difficulty.enum';
 import { PatternAlreadyExistsException, PatternNotFoundedException } from 'src/common/exception/service.exception';
+import { Queue } from 'bullmq';
+import { QUEUE_NAMES } from 'src/infrastructure/queue/queue.constants';
+import { InjectQueue } from '@nestjs/bullmq';
 
 @Injectable()
 export class PatternService {
   constructor(
     @InjectRepository(Pattern)
     private readonly patternRepository: Repository<Pattern>,
+    @InjectQueue(QUEUE_NAMES.PATTERN_SYNC)
+    private readonly queue: Queue,
   ) { }
 
   async createPattern(createPatternDto: CreatePatternDto, song: Song) {

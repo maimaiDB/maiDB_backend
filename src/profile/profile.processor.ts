@@ -6,8 +6,9 @@ import { load } from 'cheerio';
 import { ProfileService } from './profile.service';
 import { COMBO_FLAG_MAP, ComboFlag, DIFF_MAP, Difficulty, PlayRecord, Rank, RANK_MAP, SYNC_FLAG_MAP, SyncFlag } from './types/play-record-parser.type';
 import { parse } from 'path';
+import { QUEUE_NAMES } from 'src/infrastructure/queue/queue.constants';
 
-@Processor('raw-data-normalization')
+@Processor(QUEUE_NAMES.PROFILE_SYNC)
 export class ProfileProcessor extends WorkerHost {
     constructor(
         private readonly profileService: ProfileService,
