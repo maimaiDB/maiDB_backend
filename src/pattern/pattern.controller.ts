@@ -4,10 +4,10 @@ import { CreatePatternDto } from './dto/create-pattern.dto';
 import { UpdatePatternDto } from './dto/update-pattern.dto';
 import { SongService } from 'src/song/song.service';
 import { SongNotFoundedException } from 'src/common/exception/service.exception';
-import { JwtRefreshGuard } from 'src/auth/guards/jwt-refresh.guard';
 import { RolesGuard } from 'src/user/guards/roles.guard';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { UserRole } from 'src/user/enums/user-role.enum';
+import { JwtAccessGuard } from 'src/auth/guards/jwt-access.guard';
 
 @Controller('patterns')
 export class PatternController {
@@ -17,7 +17,7 @@ export class PatternController {
   ) { }
 
   @Post(':songId')
-  @UseGuards(JwtRefreshGuard, RolesGuard)
+  @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async createPattern(
     @Param('songId', ParseIntPipe) songId: number,
@@ -45,14 +45,14 @@ export class PatternController {
   }
 
   @Patch(':patternId')
-  @UseGuards(JwtRefreshGuard, RolesGuard)
+  @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async updatePattern(@Param('patternId', ParseIntPipe) patternId: number, @Body() updatePatternDto: UpdatePatternDto) {
     return this.patternService.updatePattern(patternId, updatePatternDto);
   }
 
   @Delete(':patternId')
-  @UseGuards(JwtRefreshGuard, RolesGuard)
+  @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async removePattern(@Param('patternId', ParseIntPipe) patternId: number) {
     return await this.patternService.removePattern(patternId);
