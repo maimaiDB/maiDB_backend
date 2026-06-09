@@ -10,6 +10,7 @@ import { Queue } from 'bullmq';
 import { User } from 'src/user/entities/user.entity';
 import { ProfileData } from './types/profile-parser.type';
 import { QUEUE_NAMES } from 'src/infrastructure/queue/queue.constants';
+import { isSessionExpired } from 'src/utils/html-parser.util';
 
 @Injectable()
 export class ProfileService {
@@ -107,18 +108,11 @@ export class ProfileService {
   parseFriendCodeOrFail(html: string): string {
     const match = html.match(/(\d{13})/);
 
-    if (this.isSessionExpired(html) || !match) {
+    if (isSessionExpired(html) || !match) {
       throw new Error('세션이 만료되었거나, friend code를 찾을 수 없습니다.');
     }
 
     return match[1];
-  }
-
-  isSessionExpired(html: string): boolean {
-    return (
-      html.includes('エラーコード：200002') ||
-      html.includes('再度ログインしてください')
-    );
   }
 
   async removeProfile(region: Region, friendCode: string) {

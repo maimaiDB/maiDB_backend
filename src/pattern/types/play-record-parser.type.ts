@@ -1,3 +1,5 @@
+import { Difficulty } from "../enums/difficulty.enum";
+
 export type Rank =
     | 'D'
     | 'C'
@@ -48,16 +50,6 @@ export const COMBO_FLAG_MAP: Record<string, ComboFlag> = {
     fcp: 'fcp',
     ap: 'ap',
     app: 'app',
-};
-
-export type Difficulty = 'BASIC' | 'ADVANCED' | 'EXPERT' | 'MASTER' | 'RE:MASTER';
-
-export const DIFF_MAP: Record<string, Difficulty> = {
-    genre99_diff0: 'BASIC',
-    genre99_diff1: 'ADVANCED',
-    genre99_diff2: 'EXPERT',
-    genre99_diff3: 'MASTER',
-    genre99_diff4: 'RE:MASTER',
 };
 
 export interface PlayRecord {
