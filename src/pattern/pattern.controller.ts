@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, HttpCode } from '@nestjs/common';
 import { PatternService } from './pattern.service';
 import { CreatePatternDto } from './dto/create-pattern.dto';
 import { UpdatePatternDto } from './dto/update-pattern.dto';
@@ -8,6 +8,7 @@ import { RolesGuard } from 'src/user/guards/roles.guard';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { UserRole } from 'src/user/enums/user-role.enum';
 import { JwtAccessGuard } from 'src/auth/guards/jwt-access.guard';
+import { RawDataDto } from 'src/profile/dto/raw-data.dto';
 
 @Controller('patterns')
 export class PatternController {
@@ -15,6 +16,21 @@ export class PatternController {
     private readonly patternService: PatternService,
     private readonly songService: SongService
   ) { }
+
+  // 프로필 동기화
+  @Post()
+  @HttpCode(202) // MQ에 정규화 메세지가 들어가니까 응답은 202 Accepted로 통일
+  @UseGuards(JwtAccessGuard)
+  async syncPattern(
+    @Body() rawDataDto: RawDataDto,
+  ) {
+
+    const response = await this.patternService.enqueuePatternSync(
+      rawDataDto,
+    );
+
+    return response;
+  }
 
   @Post(':songId')
   @UseGuards(JwtAccessGuard, RolesGuard)

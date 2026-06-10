@@ -10,6 +10,7 @@ import { PatternAlreadyExistsException, PatternNotFoundedException } from 'src/c
 import { Queue } from 'bullmq';
 import { QUEUE_NAMES } from 'src/infrastructure/queue/queue.constants';
 import { InjectQueue } from '@nestjs/bullmq';
+import { RawDataDto } from 'src/profile/dto/raw-data.dto';
 
 @Injectable()
 export class PatternService {
@@ -19,6 +20,29 @@ export class PatternService {
     @InjectQueue(QUEUE_NAMES.PATTERN_SYNC)
     private readonly queue: Queue,
   ) { }
+
+  // 정규화 및 패턴 upsert를 수행하기 위한 메세지를 메세지큐에 등록하는 메소드
+  async enqueuePatternSync(rawDataDto: RawDataDto) {
+    const job = await this.queue.add(
+      QUEUE_NAMES.PATTERN_SYNC,
+      {
+        rawData: rawDataDto,
+      },
+      {
+        attempts: 3, // 최대 재시도 횟수
+        backoff: {
+          type: 'exponential', // 지수 백오프 전략
+          delay: 1000, // 초기 지연 시간 (1초)
+        },
+        removeOnComplete: true, // 작업 완료 후 자동으로 제거
+        removeOnFail: false, // 작업 실패 시 제거하지 않음
+      }
+    );
+
+    return {
+      messageId: job.id
+    };
+  }
 
   async createPattern(createPatternDto: CreatePatternDto, song: Song) {
     // pattern을 생성하기 전 중복된 데이터가 DB에 없는지 먼저 확인
