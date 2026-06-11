@@ -6,6 +6,7 @@ import { Pattern } from './entities/pattern.entity';
 import { SongModule } from 'src/song/song.module';
 import { BullModule } from '@nestjs/bullmq';
 import { QUEUE_NAMES } from 'src/infrastructure/queue/queue.constants';
+import { PatternProcessor } from 'src/infrastructure/queue/processors/pattern-sync.processor';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { QUEUE_NAMES } from 'src/infrastructure/queue/queue.constants';
     ),
   ],
   controllers: [PatternController],
-  providers: [PatternService],
+  providers: [PatternService, PatternProcessor],
 })
 export class PatternModule { }

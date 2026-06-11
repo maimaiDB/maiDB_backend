@@ -18,7 +18,7 @@ export class PatternController {
   ) { }
 
   // 프로필 동기화
-  @Post()
+  @Post('/sync/')
   @HttpCode(202) // MQ에 정규화 메세지가 들어가니까 응답은 202 Accepted로 통일
   @UseGuards(JwtAccessGuard)
   async syncPattern(
