@@ -9,11 +9,11 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [
     TypeOrmModule.forFeature([User]),
     // Auth의 Guard 및 Strategy를 사용하기 위해 모듈을 import해옴
-    AuthModule
+    AuthModule,
   ],
   controllers: [UserController],
   providers: [UserService],
   // UserService를 exports에 추가하여 다른 모듈에서 사용할 수 있도록 함
-  exports: [UserService]
+  exports: [UserService],
 })
-export class UserModule { }
+export class UserModule {}

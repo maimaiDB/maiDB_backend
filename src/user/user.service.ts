@@ -25,7 +25,7 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly configService: ConfigService,
-  ) { }
+  ) {}
 
   async createUser(email: string, password: string) {
     // NOTE : authService에서 비밀번호 해싱을 담당. 반드시 해싱을 끝낸 password가 이 메소드로 전달되어야 함!!!
@@ -108,7 +108,10 @@ export class UserService {
     }
 
     // 변경하려는 이메일이 이미 존재하는 이메일인지 확인
-    if (updateUserDto.email && (await this.isEmailAlreadyUsed(updateUserDto.email))) {
+    if (
+      updateUserDto.email &&
+      (await this.isEmailAlreadyUsed(updateUserDto.email))
+    ) {
       throw EmailAlreadyExistsException();
     }
 

@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { SongService } from './song.service';
 import { CreateSongDto } from './dto/create-song.dto';
 import { UpdateSongDto } from './dto/update-song.dto';
@@ -11,7 +21,7 @@ import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @Controller('songs')
 export class SongController {
-  constructor(private readonly songService: SongService) { }
+  constructor(private readonly songService: SongService) {}
 
   @Post()
   @ApiOperation({ summary: '노래 생성 (관리자 전용)' })
@@ -53,7 +63,7 @@ export class SongController {
   @Roles(UserRole.ADMIN)
   async updateSong(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateSongDto: UpdateSongDto
+    @Body() updateSongDto: UpdateSongDto,
   ) {
     return this.songService.updateSong(id, updateSongDto);
   }

@@ -25,7 +25,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
-  ) { }
+  ) {}
 
   /**
    *  CHECKLIST
@@ -94,7 +94,7 @@ export class AuthService {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       expiresIn: parseInt(
         this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') ||
-        '86400',
+          '86400',
         10,
       ),
     });
@@ -106,12 +106,12 @@ export class AuthService {
       user: user,
       expiresAt: new Date(
         Date.now() +
-        parseInt(
-          this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') ||
-          '86400',
-          10,
-        ) *
-        1000,
+          parseInt(
+            this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') ||
+              '86400',
+            10,
+          ) *
+            1000,
       ),
     });
 

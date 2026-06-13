@@ -1,7 +1,16 @@
-import { RefreshToken } from "src/auth/entities/refresh-token.entity";
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { UserRole } from "../enums/user-role.enum";
-import { Profile } from "src/profile/entities/profile.entity";
+import { RefreshToken } from 'src/auth/entities/refresh-token.entity';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { UserRole } from '../enums/user-role.enum';
+import { Profile } from 'src/profile/entities/profile.entity';
 
 /**
  * CHECKLIST
@@ -35,16 +44,16 @@ export class User extends BaseEntity {
   updatedAt: Date;
 
   // soft delete를 위한 deletedAt 컬럼
-  // 삭제 시 해당 컬럼에 삭제 시각이 기록되고 실제 데이터는 삭제되지 않음  
+  // 삭제 시 해당 컬럼에 삭제 시각이 기록되고 실제 데이터는 삭제되지 않음
   // deletedAt이 null이 아닌 경우 해당 레코드는 find()시 조회되지 않음
   // 실제 쿼리 : SELECT * FROM users WHERE deletedAt IS NULL;
   // 삭제된 데이터까지 조회하려면 find시 find({withDeleted: true}) 옵션을 사용해야 함
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @OneToMany(() => RefreshToken, refreshToken => refreshToken.user)
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshTokens?: RefreshToken[];
 
-  @OneToMany(() => Profile, profile => profile.user)
+  @OneToMany(() => Profile, (profile) => profile.user)
   profiles?: Profile[];
 }

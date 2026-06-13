@@ -10,9 +10,9 @@ import { QueueModule } from 'src/infrastructure/queue/queue.module';
   imports: [
     TypeOrmModule.forFeature([Profile]),
     // queue 모듈을 ProfileModule에 등록하여 사용할 수 있도록 함
-    QueueModule
+    QueueModule,
   ],
   controllers: [ProfileController],
   providers: [ProfileService, ProfileProcessor],
 })
-export class ProfileModule { }
+export class ProfileModule {}

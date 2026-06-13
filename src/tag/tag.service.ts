@@ -3,7 +3,10 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { Repository } from 'typeorm';
 import { Tag } from './entities/tag.entity';
-import { TagNameAlreadyExistsException, TagNotFoundedException } from 'src/common/exception/service.exception';
+import {
+  TagNameAlreadyExistsException,
+  TagNotFoundedException,
+} from 'src/common/exception/service.exception';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -11,7 +14,7 @@ export class TagService {
   constructor(
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
-  ) { }
+  ) {}
 
   async createTag(createTagDto: CreateTagDto) {
     const newTag = await this.tagRepository.create({ ...createTagDto });
@@ -26,7 +29,7 @@ export class TagService {
   }
 
   async findTagByTagNameOrFail(tagName: string) {
-    const tag = await this.tagRepository.findOne({ where: { tagName } });;
+    const tag = await this.tagRepository.findOne({ where: { tagName } });
 
     if (!tag) {
       throw TagNotFoundedException();
@@ -40,8 +43,10 @@ export class TagService {
   }
 
   async updateTag(id: number, updateTagDto: UpdateTagDto) {
-
-    if (updateTagDto.tagName && await this.isTagNameAlreadyExisted(updateTagDto.tagName)) {
+    if (
+      updateTagDto.tagName &&
+      (await this.isTagNameAlreadyExisted(updateTagDto.tagName))
+    ) {
       throw TagNameAlreadyExistsException();
     }
 

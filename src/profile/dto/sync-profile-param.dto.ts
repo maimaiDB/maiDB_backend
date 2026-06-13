@@ -4,10 +4,10 @@ import { Region } from '../enums/region.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SyncProfileParamDto {
-    @ApiProperty({
-        description: '내수/외수 구분',
-        example: 'INTERNATIONAL',
-    })
-    @IsEnum(Region)
-    region: Region;
+  @ApiProperty({
+    description: '내수/외수 구분',
+    example: 'INTERNATIONAL',
+  })
+  @IsEnum(Region)
+  region: Region;
 }

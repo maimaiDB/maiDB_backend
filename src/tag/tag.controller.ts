@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
@@ -11,7 +21,7 @@ import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @Controller('tags')
 export class TagController {
-  constructor(private readonly tagService: TagService) { }
+  constructor(private readonly tagService: TagService) {}
 
   @Post()
   @ApiOperation({ summary: '태그 생성 (관리자 전용)' })
@@ -50,13 +60,13 @@ export class TagController {
   @ApiParam({
     name: 'id',
     description: '태그 ID',
-    type: Number
+    type: Number,
   })
   @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateTagDto: UpdateTagDto
+    @Body() updateTagDto: UpdateTagDto,
   ) {
     return this.tagService.updateTag(id, updateTagDto);
   }
@@ -70,7 +80,7 @@ export class TagController {
   @ApiParam({
     name: 'id',
     description: '태그 ID',
-    type: Number
+    type: Number,
   })
   @UseGuards(JwtAccessGuard, RolesGuard)
   @Roles(UserRole.ADMIN)

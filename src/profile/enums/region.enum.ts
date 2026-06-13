@@ -1,4 +1,4 @@
 export enum Region {
-    JP = 'JP',
-    INTERNATIONAL = 'INTERNATIONAL',
+  JP = 'JP',
+  INTERNATIONAL = 'INTERNATIONAL',
 }

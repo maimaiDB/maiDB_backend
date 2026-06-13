@@ -1,6 +1,6 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from "@nestjs/common";
-import { ServiceException } from "./service.exception";
-import { Response } from "express";
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import { ServiceException } from './service.exception';
+import { Response } from 'express';
 
 // Catch 데코레이터 : NestJS에서 제공하는 예외 필터 데코레이터
 // @Catch(ServiceException) : ServiceException 예외가 발생했을 때 이 필터(클래스)가 해당 예외를 처리하도록 지정
@@ -14,18 +14,16 @@ import { Response } from "express";
  */
 @Catch(ServiceException)
 export class ServiceExceptionToHttpExceptionFilter implements ExceptionFilter {
-    catch(exception: ServiceException, host: ArgumentsHost) {
-        const ctx = host.switchToHttp();
-        const response = ctx.getResponse<Response>();
-        const status = exception.errorCode.status;
+  catch(exception: ServiceException, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const status = exception.errorCode.status;
 
-        // ServiceException에서 에러코드와 메시지를 추출하여 HTTP 응답으로 변환
-        response
-            .status(status)
-            .json({
-                code: exception.errorCode.code,
-                message: exception.message,
-                timestamp: new Date().toISOString()
-            });
-    }
+    // ServiceException에서 에러코드와 메시지를 추출하여 HTTP 응답으로 변환
+    response.status(status).json({
+      code: exception.errorCode.code,
+      message: exception.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
 }

@@ -1,71 +1,105 @@
-import { EMAIL_ALREADY_EXISTS, ErrorCode, INVALID_CREDENTIALS, INVALID_ID_FORMAT, INVALID_JWT_FORMAT, INVALID_JWT_TOKEN, REFRESH_TOKEN_NOT_FOUND, TOKEN_EXPIRED, USER_NOT_FOUNDED, ACCESS_DENIED, SONG_TITLE_ALREADY_EXISTS, SONG_NOT_FOUNDED, TAG_NAME_NOT_FOUNDED, TAG_NAME_ALREADY_EXISTS, PROFILE_NOT_FOUNDED } from "./error.code";
+import {
+  EMAIL_ALREADY_EXISTS,
+  ErrorCode,
+  INVALID_CREDENTIALS,
+  INVALID_ID_FORMAT,
+  INVALID_JWT_FORMAT,
+  INVALID_JWT_TOKEN,
+  REFRESH_TOKEN_NOT_FOUND,
+  TOKEN_EXPIRED,
+  USER_NOT_FOUNDED,
+  ACCESS_DENIED,
+  SONG_TITLE_ALREADY_EXISTS,
+  SONG_NOT_FOUNDED,
+  TAG_NAME_NOT_FOUNDED,
+  TAG_NAME_ALREADY_EXISTS,
+  PROFILE_NOT_FOUNDED,
+} from './error.code';
 
 // error 클래스를 상속받은 ServiceException 클래스 정의
 // serviceException 클래스는 NestJS의 ExceptionFilter에서 감지하기 위한 커스텀 예외 클래스
 // (error 클래스는 name, message, stack을 가지는 에러 객체의 최상위 부모)
 export class ServiceException extends Error {
-    readonly errorCode: ErrorCode;
+  readonly errorCode: ErrorCode;
 
-    constructor(errorCode: ErrorCode, message?: string) {
-        super(message ? message : errorCode.message);
+  constructor(errorCode: ErrorCode, message?: string) {
+    super(message ? message : errorCode.message);
 
-        this.errorCode = errorCode;
-    }
+    this.errorCode = errorCode;
+  }
 }
 
 // error.code.ts에서 정의된 에러 코드를 토대로 ServiceException을 생성하는 함수 정의
-export const InvalidIdFormatException = (message?: string): ServiceException => {
-    return new ServiceException(INVALID_ID_FORMAT, message);
-}
+export const InvalidIdFormatException = (
+  message?: string,
+): ServiceException => {
+  return new ServiceException(INVALID_ID_FORMAT, message);
+};
 
-export const InvalidJwtFormatException = (message?: string): ServiceException => {
-    return new ServiceException(INVALID_JWT_FORMAT, message);
-}
+export const InvalidJwtFormatException = (
+  message?: string,
+): ServiceException => {
+  return new ServiceException(INVALID_JWT_FORMAT, message);
+};
 
-export const InvalidCredentialsException = (message?: string): ServiceException => {
-    return new ServiceException(INVALID_CREDENTIALS, message);
-}
+export const InvalidCredentialsException = (
+  message?: string,
+): ServiceException => {
+  return new ServiceException(INVALID_CREDENTIALS, message);
+};
 
 export const TokenExpiredException = (message?: string): ServiceException => {
-    return new ServiceException(TOKEN_EXPIRED, message);
-}
+  return new ServiceException(TOKEN_EXPIRED, message);
+};
 
-export const InvalidJwtTokenException = (message?: string): ServiceException => {
-    return new ServiceException(INVALID_JWT_TOKEN, message);
-}
+export const InvalidJwtTokenException = (
+  message?: string,
+): ServiceException => {
+  return new ServiceException(INVALID_JWT_TOKEN, message);
+};
 
 export const AccessDeniedException = (message?: string): ServiceException => {
-    return new ServiceException(ACCESS_DENIED, message);
-}
+  return new ServiceException(ACCESS_DENIED, message);
+};
 
 export const UserNotFoundedException = (message?: string): ServiceException => {
-    return new ServiceException(USER_NOT_FOUNDED, message);
-}
+  return new ServiceException(USER_NOT_FOUNDED, message);
+};
 
 export const SongNotFoundedException = (message?: string): ServiceException => {
-    return new ServiceException(SONG_NOT_FOUNDED, message);
-}
+  return new ServiceException(SONG_NOT_FOUNDED, message);
+};
 
-export const ProfileNotFoundedException = (message?: string): ServiceException => {
-    return new ServiceException(PROFILE_NOT_FOUNDED, message);
-}
+export const ProfileNotFoundedException = (
+  message?: string,
+): ServiceException => {
+  return new ServiceException(PROFILE_NOT_FOUNDED, message);
+};
 
 export const TagNotFoundedException = (message?: string): ServiceException => {
-    return new ServiceException(TAG_NAME_NOT_FOUNDED, message);
-}
+  return new ServiceException(TAG_NAME_NOT_FOUNDED, message);
+};
 
-export const RefreshTokenNotFoundedException = (message?: string): ServiceException => {
-    return new ServiceException(REFRESH_TOKEN_NOT_FOUND, message);
-}
+export const RefreshTokenNotFoundedException = (
+  message?: string,
+): ServiceException => {
+  return new ServiceException(REFRESH_TOKEN_NOT_FOUND, message);
+};
 
-export const EmailAlreadyExistsException = (message?: string): ServiceException => {
-    return new ServiceException(EMAIL_ALREADY_EXISTS, message);
-}
+export const EmailAlreadyExistsException = (
+  message?: string,
+): ServiceException => {
+  return new ServiceException(EMAIL_ALREADY_EXISTS, message);
+};
 
-export const SongTitleAlreadyExistsException = (message?: string): ServiceException => {
-    return new ServiceException(SONG_TITLE_ALREADY_EXISTS, message);
-}
+export const SongTitleAlreadyExistsException = (
+  message?: string,
+): ServiceException => {
+  return new ServiceException(SONG_TITLE_ALREADY_EXISTS, message);
+};
 
-export const TagNameAlreadyExistsException = (message?: string): ServiceException => {
-    return new ServiceException(TAG_NAME_ALREADY_EXISTS, message);
-}
+export const TagNameAlreadyExistsException = (
+  message?: string,
+): ServiceException => {
+  return new ServiceException(TAG_NAME_ALREADY_EXISTS, message);
+};

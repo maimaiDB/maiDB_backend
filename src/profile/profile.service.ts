@@ -17,17 +17,22 @@ export class ProfileService {
     private readonly profileRepository: Repository<Profile>,
     @InjectQueue('raw-data-normalization')
     private readonly queue: Queue,
-  ) { }
+  ) {}
 
   // 정규화 및 프로필 upsert를 수행하기 위한 메세지를 메세지큐에 등록하는 메소드
-  async enqueueProfileSync(region: Region, friendCode: string, rawDataDto: RawDataDto, user: User) {
+  async enqueueProfileSync(
+    region: Region,
+    friendCode: string,
+    rawDataDto: RawDataDto,
+    user: User,
+  ) {
     const job = await this.queue.add(
       'raw-data-normalization',
       {
         region,
         friendCode,
         rawData: rawDataDto,
-        user
+        user,
       },
       {
         attempts: 3, // 최대 재시도 횟수
@@ -37,11 +42,11 @@ export class ProfileService {
         },
         removeOnComplete: true, // 작업 완료 후 자동으로 제거
         removeOnFail: false, // 작업 실패 시 제거하지 않음
-      }
+      },
     );
 
     return {
-      messageId: job.id
+      messageId: job.id,
     };
   }
 
@@ -52,7 +57,7 @@ export class ProfileService {
    * */
 
   async upsertProfile(region: Region, profileData: ProfileData, user: User) {
-    const profile = new Profile()
+    const profile = new Profile();
     profile.friendCode = profileData.friendCode;
     profile.region = region;
     profile.name = profileData.name;
@@ -75,12 +80,29 @@ export class ProfileService {
       .insert()
       .into(Profile)
       .values(profile)
-      .orUpdate(['name', 'maxRating', 'currentRating', 'playCount', 'trophyText', 'trophyType', 'iconUrl', 'courseRank', 'classRank', 'starCount', 'userId'], ['friendCode', 'region'])
+      .orUpdate(
+        [
+          'name',
+          'maxRating',
+          'currentRating',
+          'playCount',
+          'trophyText',
+          'trophyType',
+          'iconUrl',
+          'courseRank',
+          'classRank',
+          'starCount',
+          'userId',
+        ],
+        ['friendCode', 'region'],
+      )
       .execute();
   }
 
   async findProfileOrFail(region: Region, friendCode: string) {
-    const profile = await this.profileRepository.findOne({ where: { region, friendCode } });
+    const profile = await this.profileRepository.findOne({
+      where: { region, friendCode },
+    });
 
     if (!profile) {
       throw ProfileNotFoundedException();
@@ -89,12 +111,20 @@ export class ProfileService {
     return profile;
   }
 
-  async isProfileExistByRegionAndUserId(region: Region, user: User): Promise<boolean> {
-    console.log("isProfileExistByRegionAndUserId called with region:", region, "user:", user);
+  async isProfileExistByRegionAndUserId(
+    region: Region,
+    user: User,
+  ): Promise<boolean> {
+    console.log(
+      'isProfileExistByRegionAndUserId called with region:',
+      region,
+      'user:',
+      user,
+    );
     const profile = await this.profileRepository.findOne({
-      where: { region, user: { id: user.id } }
+      where: { region, user: { id: user.id } },
     });
-    console.log("Profile found:", profile);
+    console.log('Profile found:', profile);
     return !!profile;
   }
 
@@ -121,7 +151,10 @@ export class ProfileService {
   }
 
   async removeProfile(region: Region, friendCode: string) {
-    const response = await this.profileRepository.delete({ region, friendCode });
+    const response = await this.profileRepository.delete({
+      region,
+      friendCode,
+    });
 
     if (response.affected === 0) {
       throw ProfileNotFoundedException();
