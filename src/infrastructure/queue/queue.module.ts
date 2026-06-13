@@ -10,7 +10,7 @@ const redisPort = Number(process.env.REDIS_PORT);
     BullModule.forRoot({
       connection: {
         host: redisHost,
-        port: Number.isInteger(redisPort) && redisPort > 0 ? redisPort : 6379,
+        parseInt(process.env.REDIS_PORT || '6379', 10) || 6379,
       },
     }),
     BullModule.registerQueue({
