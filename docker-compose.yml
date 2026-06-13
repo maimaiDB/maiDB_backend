@@ -1,9 +1,17 @@
 services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
   app:
     build: .
     env_file: .env
     network_mode: host
     restart: unless-stopped
+    depends_on:
+      - redis
     environment:
       DB_HOST: localhost
 
