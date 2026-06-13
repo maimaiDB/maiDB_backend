@@ -20,16 +20,11 @@ import { Roles } from 'src/user/decorators/roles.decorator';
 import { UserRole } from 'src/user/enums/user-role.enum';
 import { ProfileOwnerGuard } from './guards/profile-owner.guard';
 import { JobOwnerGuard } from './guards/job-owner.guard';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @Controller('profiles')
 export class ProfileController {
-  constructor(private readonly profileService: ProfileService) {}
+  constructor(private readonly profileService: ProfileService) { }
 
   // 프로필 동기화
   //
@@ -41,7 +36,7 @@ export class ProfileController {
   @ApiParam({
     name: 'region',
     description: '내수/외수 구분',
-    type: String,
+    type: String
   })
   @ApiBearerAuth('accessToken')
   @HttpCode(202) // Profile 존재 여부와 관계없이 MQ에 정규화 메세지가 들어가니까 응답은 202 Accepted로 통일
@@ -71,22 +66,16 @@ export class ProfileController {
   }
 
   @Get('job/:id')
-  @ApiOperation({
-    summary:
-      '삽입한 정규화 메세지(job)의 상태를 가져오는 메소드 (유저/관리자 전용)',
-  })
+  @ApiOperation({ summary: '삽입한 정규화 메세지(job)의 상태를 가져오는 메소드 (유저/관리자 전용)' })
   @ApiResponse({ status: 200, description: 'job 상태 가져오기 성공' })
   @ApiResponse({ status: 400, description: '유효성 검증 실패' })
   @ApiResponse({ status: 401, description: 'Access 토큰이 없거나 만료됨' })
-  @ApiResponse({
-    status: 403,
-    description: '관리자 권한이 없거나 job을 등록한 유저 본인이 아님',
-  })
+  @ApiResponse({ status: 403, description: '관리자 권한이 없거나 job을 등록한 유저 본인이 아님' })
   @ApiResponse({ status: 404, description: '해당 id의 job이 발견되지 않음' })
   @ApiParam({
     name: 'region',
     description: '내수/외수 구분',
-    type: String,
+    type: String
   })
   @ApiBearerAuth('accessToken')
   @UseGuards(JwtAccessGuard, JobOwnerGuard)
@@ -105,29 +94,21 @@ export class ProfileController {
   }
 
   @Get(':region/:friendCode')
-  @ApiOperation({
-    summary: '특정 region/friendCode의 프로필 조회 (유저/관리자 전용)',
-  })
+  @ApiOperation({ summary: '특정 region/friendCode의 프로필 조회 (유저/관리자 전용)' })
   @ApiResponse({ status: 200, description: '프로필 조회 성공' })
   @ApiResponse({ status: 400, description: '유효성 검증 실패' })
   @ApiResponse({ status: 401, description: 'Access 토큰이 없거나 만료됨' })
-  @ApiResponse({
-    status: 403,
-    description: '관리자 권한이 없거나 유저 본인이 아님',
-  })
-  @ApiResponse({
-    status: 404,
-    description: '해당 region/friendCode의 프로필이 발견되지 않음',
-  })
+  @ApiResponse({ status: 403, description: '관리자 권한이 없거나 유저 본인이 아님' })
+  @ApiResponse({ status: 404, description: '해당 region/friendCode의 프로필이 발견되지 않음' })
   @ApiParam({
     name: 'region',
     description: '내수/외수 구분',
-    type: String,
+    type: String
   })
   @ApiParam({
     name: 'friendCode',
     description: '친구 코드(숫자 13자리)',
-    type: String,
+    type: String
   })
   async getProfile(@Param() params: ProfileParamDto) {
     const { region, friendCode } = params;
@@ -144,23 +125,17 @@ export class ProfileController {
   @ApiResponse({ status: 204, description: '프로필 삭제 성공' })
   @ApiResponse({ status: 400, description: '유효성 검증 실패' })
   @ApiResponse({ status: 401, description: 'Access 토큰이 없거나 만료됨' })
-  @ApiResponse({
-    status: 403,
-    description: '관리자 권한이 없거나 유저 본인이 아님',
-  })
-  @ApiResponse({
-    status: 404,
-    description: '해당 region/friendCode의 프로필이 발견되지 않음',
-  })
+  @ApiResponse({ status: 403, description: '관리자 권한이 없거나 유저 본인이 아님' })
+  @ApiResponse({ status: 404, description: '해당 region/friendCode의 프로필이 발견되지 않음' })
   @ApiParam({
     name: 'region',
     description: '내수/외수 구분',
-    type: String,
+    type: String
   })
   @ApiParam({
     name: 'friendCode',
     description: '친구 코드(숫자 13자리)',
-    type: String,
+    type: String
   })
   @ApiBearerAuth('accessToken')
   @UseGuards(JwtAccessGuard, RolesGuard, ProfileOwnerGuard)

@@ -1,13 +1,13 @@
 export type TrophyType = 'Normal' | 'Bronze' | 'Silver' | 'Gold' | 'Rainbow';
 
 export interface ProfileData {
-  name: string;
-  rating: number;
-  trophyText: string;
-  trophyType: TrophyType;
-  iconUrl: string;
-  courseRank: string;
-  classRank: string;
-  starCount: number;
-  friendCode: string;
+    name: string;
+    rating: number;
+    trophyText: string;
+    trophyType: TrophyType;
+    iconUrl: string;
+    courseRank: string;
+    classRank: string;
+    starCount: number;
+    friendCode: string;
 }

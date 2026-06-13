@@ -6,8 +6,10 @@ import { Song } from './entities/song.entity';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Song])],
+  imports: [
+    TypeOrmModule.forFeature([Song]),
+  ],
   controllers: [SongController],
   providers: [SongService],
 })
-export class SongModule {}
+export class SongModule { }
