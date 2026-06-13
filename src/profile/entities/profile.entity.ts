@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { User } from "src/user/entities/user.entity";
 import { Region } from "../enums/region.enum";
 
@@ -44,6 +44,12 @@ export class Profile {
 
     @Column({ nullable: false, default: 0 })
     starCount: number;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
 
     // User 엔티티와의 관계 설정 (외래 키)
     @ManyToOne(() => User, user => user.profiles, { nullable: false, onDelete: 'CASCADE' })
