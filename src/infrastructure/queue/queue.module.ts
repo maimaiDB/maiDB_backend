@@ -9,7 +9,7 @@ const redisPort = Number(process.env.REDIS_PORT);
   imports: [
     BullModule.forRoot({
       connection: {
-        host: redisHost,
+        host: process.env.REDIS_HOST?.trim() || 'localhost',
         parseInt(process.env.REDIS_PORT || '6379', 10) || 6379,
       },
     }),
