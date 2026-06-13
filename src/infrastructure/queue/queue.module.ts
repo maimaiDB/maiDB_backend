@@ -2,9 +2,6 @@
 import { Global, Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 
-const redisHost = process.env.REDIS_HOST?.trim() || 'localhost';
-const redisPort = Number(process.env.REDIS_PORT);
-
 @Module({
   imports: [
     BullModule.forRoot({
